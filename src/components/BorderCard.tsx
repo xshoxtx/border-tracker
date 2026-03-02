@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Car, CaretRight, Clock } from "@phosphor-icons/react";
+import { Car, Clock } from "@phosphor-icons/react";
 import { ShareCard } from "@/components/ShareCard";
 
 interface BorderCardProps {
@@ -72,10 +72,7 @@ export const BorderCard = ({ location, queueTime, status, lastUpdated, loading }
                     </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-2">
-                    <ShareCard border={location} queueTime={queueTime} status={status} />
-                    <CaretRight size={20} weight="bold" style={{ color: "var(--muted-foreground)" }} />
-                </div>
+                <ShareCard border={location} queueTime={queueTime} status={status} />
             </div>
         </motion.div>
     );
