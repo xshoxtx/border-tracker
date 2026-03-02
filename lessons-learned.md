@@ -69,3 +69,27 @@
 - **API**: `POST /api/telegram/broadcast` — supports `test`, `summary`, and custom `message`.
 - **Key insight**: Telegram Bot API is free + unlimited, vs WhatsApp/Twilio (paid per message).
 - **Env vars**: `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` in `.env` (chmod 600).
+
+---
+
+### [2026-03-02] wttr.in Unreachable from VPS → Switched to Open-Meteo
+- **Problem**: wttr.in API timed out from Hostinger VPS (works locally but not on server).
+- **Solution**: Switched to Open-Meteo API — free, no API key, reliable, same data format.
+- **Lesson**: Always have fallback weather service. wttr.in is great for CLI but unreliable for server-to-server calls.
+
+### [2026-03-02] Theme Flicker on PWA Reopen — Hydration Mismatch
+- **Problem**: When user sets light mode, closes PWA, reopens → page renders dark (server default), then flashes to light when Settings tab mounts ThemeToggle.
+- **Root cause**: `<html className="dark">` hardcoded in `layout.tsx`. ThemeToggle only reads localStorage on mount.
+- **Fix**: Added blocking inline `<script>` in `<head>` that reads localStorage and applies theme class BEFORE React hydrates. Added `suppressHydrationWarning` to `<html>`.
+- **Lesson**: For SSR apps with localStorage-based themes, always use a blocking script to avoid FOUC (Flash of Unstyled Content).
+
+### [2026-03-02] GPS Coordinates Must Be Verified at Source
+- **Problem**: Border coordinates for Kuala Lurah, Ujung Jalan, and Mengkalap were inaccurate, causing TomTom API to return traffic data for wrong road segments.
+- **Fix**: User provided verified coordinates from Google Maps. Updated across 6 files.
+- **Lesson**: GPS coordinates are foundational — wrong coords mean wrong data everywhere (heatmap, weather, cron, map). Always verify with user or on-the-ground data.
+
+### [2026-03-02] Android PWA Location Denied — Poor Default UX
+- **Problem**: Android Chrome in PWA mode blocks geolocation with no obvious way for user to re-enable it.
+- **Fix**: Added platform-specific step-by-step instructions (Android: Chrome Site Settings, iOS: Safari Location) + Try Again retry button.
+- **Lesson**: Location denied states need actionable guidance, not just "access denied" text.
+

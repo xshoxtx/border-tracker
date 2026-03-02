@@ -1,5 +1,5 @@
 # project.md — Pathfinder Border Intelligence
-**Last Updated**: 2026-03-02 | **Version**: v3.2.0 | **ALESA**: v14.3.0 Sentinel Mode
+**Last Updated**: 2026-03-02 | **Version**: v3.3.0 | **ALESA**: v14.3.0 Sentinel Mode
 
 ---
 
@@ -78,23 +78,31 @@
 
 ---
 
-## 📋 Phase 8: Smart Intelligence
-| # | Feature | Description |
+## ✅ Phase 8: Smart Intelligence (COMPLETED 2026-03-02)
+| # | Feature | Status |
 |---|---|---|
-| 1 | **🔔 Smart Departure Alert** | "Leave at 7:30am to arrive when queue < 15 min" — TomTom + historical patterns + driving distance |
-| 2 | **📅 Predicted Wait by Day** | "Mon avg 25 min, Fri avg 45 min" — built from historical TomTom + crossing report data |
-| 3 | **🌤️ Border Weather** | Show weather at each crossing (OpenWeatherMap free tier) — rain = expect delays |
-| 4 | **📈 7-Day Jam Heatmap** | Chart using TomTom Traffic Stats API historical data |
+| 1 | **📊 QueueHistory + Cron Collector** | ✅ Hourly TomTom snapshots, 90-day cleanup |
+| 2 | **🔥 Queue Heatmap** | ✅ 7×24 color-coded grid + border picker |
+| 3 | **🗺️ Google Maps Navigate** | ✅ One-tap directions from BorderCard + NearestBorder |
+| 4 | **🌤️ Border Weather** | ✅ Open-Meteo API — temp, rain, wind, humidity |
+| 5 | **📅 Holiday Queue Predictor** | ✅ Severity-based estimates (extreme→low) |
+| 6 | **🔔 Smart Departure Alert** | ✅ FCM push when queue ≤10 min, chained to cron |
+| 7 | **📌 GPS Coordinate Fixes** | ✅ All 4 borders verified by user |
+| 8 | **🌓 Theme Flicker Fix** | ✅ Blocking script for theme hydration |
+| 9 | **💬 Chat Close Button** | ✅ Close button switches to Feed |
+| 10 | **📍 Android Location UX** | ✅ Platform-specific instructions + retry |
+| 11 | **🎨 PWA Icon Redesign** | ✅ New location pin + road icon |
 
 ---
 
 ## 📋 Phase 9: Analytics & Polish
 | # | Feature | Description |
 |---|---|---|
-| 1 | **📊 Weekly Jam Report** | Auto-generated PDF/image summary every Sunday → Telegram channel. People love weekly stats |
-| 2 | **🗺️ Live Heatmap Layer** | Leaflet heatmap overlay (traffic density coloured) on Map tab |
-| 3 | **🌙 Dark/Light Mode Toggle** | Full theme switch with localStorage persistence |
-| 4 | **📱 Widget Support** | iOS/Android home screen widget showing current wait times |
+| 1 | **📊 Weekly Jam Report** | Auto-generated weekly traffic summary → Telegram broadcast |
+| 2 | **🗺️ Live Traffic Map** | Leaflet map with color-coded border pins |
+| 3 | **⭐ User Favorites** | Save preferred border, show first in Home tab |
+| 4 | **⏱️ Crossing Timer** | Track actual wait time at border |
+| 5 | **🌐 Multi-language** | Malay/English toggle |
 
 ---
 
@@ -132,6 +140,12 @@ public/
   icon-512.png         — PWA icon (maskable)
   apple-touch-icon.png — iOS home screen icon
   fonts/               — Airbnb Cereal OTF (6 weights)
+
+src/app/api/
+  weather/             — Border weather (Open-Meteo)
+  smart-alert/         — FCM push when queue clear
+  cron/collect/        — Hourly TomTom data collector
+  heatmap/             — 7×24 grid aggregation
 ```
 
 ---

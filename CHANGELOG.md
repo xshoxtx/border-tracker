@@ -4,6 +4,44 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.3.0] — 2026-03-02
+
+### Phase 8: Smart Intelligence ✅
+
+#### Added
+- **📊 QueueHistory DB** — Prisma model for hourly traffic snapshots (indexed by dayOfWeek + hour)
+- **⏰ Cron Collector** (`/api/cron/collect`) — Hourly data collection for all 8 border directions, 90-day auto-cleanup
+- **🔥 Queue Heatmap** (`/api/heatmap` + `QueueHeatmap.tsx`) — 7×24 color-coded grid, best/worst indicators, border picker
+- **🗺️ Google Maps Navigate** — One-tap driving directions from `BorderCard` and `NearestBorder`
+- **🌤️ Border Weather** (`/api/weather` + `BorderWeather.tsx`) — Open-Meteo API (free, no key), temp/rain/humidity/wind/visibility
+- **📅 Holiday Queue Predictor** — Severity-based estimates (extreme/high/moderate/low), dynamic advice tips
+- **🔔 Smart Departure Alert** (`/api/smart-alert`) — FCM push when any queue ≤10 min, auto-chained to cron
+
+#### Fixed
+- **🌓 Theme flicker on PWA reopen** — Blocking inline script applies saved theme before React hydration
+- **💬 Chat close button** — "✕ Close Chat" switches back to Feed sub-tab
+- **📍 Android location denied UX** — Platform-specific step-by-step instructions + Try Again button
+- **📌 GPS coordinates** — Fixed Kuala Lurah, Ujung Jalan, Mengkalap to user-verified values across 6 files
+
+#### New Files
+- `src/app/api/weather/route.ts` — Open-Meteo weather API
+- `src/app/api/smart-alert/route.ts` — FCM push when queue is clear
+- `src/app/api/cron/collect/route.ts` — Hourly TomTom data collector
+- `src/app/api/heatmap/route.ts` — 7×24 grid aggregation API
+- `src/components/BorderWeather.tsx` — Weather widget
+- `src/components/QueueHeatmap.tsx` — Visual heatmap grid
+
+#### Modified
+- `prisma/schema.prisma` — Added `QueueHistory` model
+- `src/app/layout.tsx` — Theme hydration fix (blocking script + suppressHydrationWarning)
+- `src/app/page.tsx` — Integrated Weather + Heatmap, chat close button
+- `src/components/HolidayAlert.tsx` — Severity-based queue predictions
+- `src/components/BorderCard.tsx` — Navigate button + ShareCard
+- `src/components/NearestBorder.tsx` — Navigate button + Android location UX
+- `public/icon-*.png` — New PWA icon (location pin + road)
+
+---
+
 ## [v3.2.0] — 2026-03-02
 
 ### Phase 7: Community & Viral ✅
