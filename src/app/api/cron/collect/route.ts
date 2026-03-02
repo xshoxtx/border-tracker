@@ -25,12 +25,12 @@ const BORDER_POINTS: Record<string, { label: string; coords: [number, number] }[
         { label: "Tedungan ➔ Brunei", coords: [4.7415, 114.8120] },
     ],
     "Ujung Jalan": [
-        { label: "Brunei ➔ Pandaruan", coords: [4.8464, 115.0294] },
-        { label: "Pandaruan ➔ Brunei", coords: [4.8471, 115.0281] },
+        { label: "Brunei ➔ Pandaruan", coords: [4.6890, 115.0393] },
+        { label: "Pandaruan ➔ Brunei", coords: [4.6895, 115.0380] },
     ],
     "Mengkalap": [
-        { label: "Brunei ➔ Lawas", coords: [4.8711, 115.1118] },
-        { label: "Lawas ➔ Brunei", coords: [4.8722, 115.1101] },
+        { label: "Brunei ➔ Lawas", coords: [4.7933, 115.2363] },
+        { label: "Lawas ➔ Brunei", coords: [4.7940, 115.2350] },
     ],
 };
 

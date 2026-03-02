@@ -10,10 +10,10 @@ const NAV_COORDS: Record<string, { lat: number; lng: number }> = {
     "Miri ➔ Brunei": { lat: 4.5852, lng: 114.0723 },
     "Brunei ➔ Tedungan": { lat: 4.7407, lng: 114.8135 },
     "Tedungan ➔ Brunei": { lat: 4.7407, lng: 114.8135 },
-    "Brunei ➔ Pandaruan": { lat: 4.6181, lng: 115.2464 },
-    "Pandaruan ➔ Brunei": { lat: 4.6181, lng: 115.2464 },
-    "Brunei ➔ Lawas": { lat: 4.5600, lng: 115.4000 },
-    "Lawas ➔ Brunei": { lat: 4.5600, lng: 115.4000 },
+    "Brunei ➔ Pandaruan": { lat: 4.6890, lng: 115.0393 },
+    "Pandaruan ➔ Brunei": { lat: 4.6890, lng: 115.0393 },
+    "Brunei ➔ Lawas": { lat: 4.7933, lng: 115.2363 },
+    "Lawas ➔ Brunei": { lat: 4.7933, lng: 115.2363 },
 };
 
 interface BorderCardProps {
