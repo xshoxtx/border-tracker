@@ -17,6 +17,7 @@ import { IncidentReport } from "@/components/IncidentReport";
 import { IncidentBanners } from "@/components/IncidentBanners";
 import { Leaderboard } from "@/components/Leaderboard";
 import { QueueHeatmap } from "@/components/QueueHeatmap";
+import { BorderWeather } from "@/components/BorderWeather";
 import {
   House,
   ChatsCircle,
@@ -156,6 +157,9 @@ export default function Home() {
 
               {/* Currency Widget */}
               <CurrencyWidget from="BND" to="MYR" />
+
+              {/* Border Weather */}
+              <BorderWeather />
 
               {/* Holiday Alert */}
               <HolidayAlert />

@@ -118,12 +118,26 @@ export async function GET(req: Request) {
         where: { createdAt: { lt: cutoff } },
     });
 
+    // Chain: trigger smart departure alerts
+    let alertResult = null;
+    try {
+        const baseUrl = req.url.split("/api/")[0];
+        const alertRes = await fetch(
+            `${baseUrl}/api/smart-alert?secret=${CRON_SECRET}`,
+            { cache: "no-store" }
+        );
+        alertResult = await alertRes.json();
+    } catch (err) {
+        alertResult = { error: "Failed to trigger smart alerts" };
+    }
+
     return NextResponse.json({
         success: true,
         collected: collected.length,
         borders: collected,
         errors: errors.length > 0 ? errors : undefined,
         cleanup: deleted.count,
+        smartAlert: alertResult,
         timestamp: now.toISOString(),
         dayOfWeek,
         hour,
