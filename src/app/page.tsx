@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { StatusBanner } from "@/components/StatusBanner";
 import { BorderCard } from "@/components/BorderCard";
@@ -15,26 +14,26 @@ import { SettingsPage } from "@/components/SettingsPage";
 import { PWAAwareness } from "@/components/PWAAwareness";
 import { QueueSnap } from "@/components/QueueSnap";
 import { IncidentReport } from "@/components/IncidentReport";
+import { IncidentBanners } from "@/components/IncidentBanners";
 import { Leaderboard } from "@/components/Leaderboard";
 import {
   House,
   ChatsCircle,
   GearSix,
+  Camera,
+  ChatText,
+  Trophy,
   MapTrifold,
 } from "@phosphor-icons/react";
 
-// Lazy load the map to avoid SSR issues with Leaflet
-const QueueMap = dynamic(() => import("@/components/QueueMap"), {
-  ssr: false,
-  loading: () => <div className="h-[400px] w-full skeleton rounded-2xl" />,
-});
-
-type TabId = "home" | "map" | "community" | "settings";
+type TabId = "home" | "community" | "settings";
+type CommunitySubTab = "chat" | "feed" | "board";
 
 const BORDER_LOCATIONS = ["All", "Sungai Tujuh", "Kuala Lurah", "Ujung Jalan", "Mengkalap"];
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabId>("home");
+  const [communitySubTab, setCommunitySubTab] = useState<CommunitySubTab>("chat");
   const [trafficData, setTrafficData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeBorder, setActiveBorder] = useState("All");
@@ -60,9 +59,14 @@ export default function Home() {
 
   const navItems: { id: TabId; label: string; icon: React.ElementType }[] = [
     { id: "home", label: "Home", icon: House },
-    { id: "map", label: "Map", icon: MapTrifold },
-    { id: "community", label: "Chat", icon: ChatsCircle },
+    { id: "community", label: "Community", icon: ChatsCircle },
     { id: "settings", label: "Settings", icon: GearSix },
+  ];
+
+  const communitySubTabs: { id: CommunitySubTab; label: string; icon: React.ElementType }[] = [
+    { id: "chat", label: "Chat", icon: ChatText },
+    { id: "feed", label: "Feed", icon: Camera },
+    { id: "board", label: "Board", icon: Trophy },
   ];
 
   const renderBorderGroup = (label: string, keys: string[]) => (
@@ -184,36 +188,7 @@ export default function Home() {
             </motion.div>
           )}
 
-          {/* MAP TAB */}
-          {activeTab === "map" && (
-            <motion.div key="map"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-              className="pt-5 space-y-4"
-            >
-              <div>
-                <h2 className="section-header">Live Border Map</h2>
-                <p className="section-subtitle">Tap markers for queue details</p>
-              </div>
-              <QueueMap trafficData={trafficData} />
-              <div className="flex items-center justify-center gap-4 py-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ background: "var(--status-smooth)" }} />
-                  <span className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>Smooth</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ background: "var(--status-moderate)" }} />
-                  <span className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>Moderate</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ background: "var(--status-congested)" }} />
-                  <span className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>Congested</span>
-                </div>
-              </div>
-            </motion.div>
-          )}
+          {/* MAP TAB — REMOVED */}
 
           {/* COMMUNITY TAB */}
           {activeTab === "community" && (
@@ -225,23 +200,58 @@ export default function Home() {
               className="pt-5 space-y-4"
             >
               <div>
-                <h2 className="section-header">Community Feed</h2>
+                <h2 className="section-header">Community</h2>
                 <p className="section-subtitle">Share live updates with travelers</p>
               </div>
 
-              {/* Active Incidents + Report */}
-              <IncidentReport />
+              {/* Sub-tab pills */}
+              <div className="flex gap-2">
+                {communitySubTabs.map(({ id, label, icon: Icon }) => (
+                  <button
+                    key={id}
+                    onClick={() => setCommunitySubTab(id)}
+                    className={`filter-pill haptic-btn flex items-center gap-1.5 ${communitySubTab === id ? "active" : ""}`}
+                  >
+                    <Icon size={14} weight={communitySubTab === id ? "fill" : "regular"} />
+                    {label}
+                  </button>
+                ))}
+              </div>
 
-              {/* Queue Camera Snap */}
-              <QueueSnap />
+              {/* Incident banners — always visible */}
+              <IncidentBanners />
 
-              {/* I Just Crossed */}
-              <CrossingReport />
+              {/* Sub-tab content */}
+              <AnimatePresence mode="wait">
+                {communitySubTab === "chat" && (
+                  <motion.div key="sub-chat"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="space-y-4"
+                  >
+                    <CrossingReport />
+                    <ChatSystem />
+                  </motion.div>
+                )}
 
-              {/* Leaderboard */}
-              <Leaderboard />
+                {communitySubTab === "feed" && (
+                  <motion.div key="sub-feed"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="space-y-4"
+                  >
+                    <IncidentReport />
+                    <QueueSnap />
+                  </motion.div>
+                )}
 
-              <ChatSystem />
+                {communitySubTab === "board" && (
+                  <motion.div key="sub-board"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="space-y-4"
+                  >
+                    <Leaderboard />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
 
