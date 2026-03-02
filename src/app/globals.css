@@ -1,0 +1,643 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════
+   PATHFINDER DESIGN SYSTEM v3.0 — Clean Minimal
+   Inspired by: Apple Health • iOS Native • Airbnb
+   Brand: #2563eb (Blue) • #f97316 (Orange) • #10b981 (Green)
+   Font: Plus Jakarta Sans
+   ALESA Designer Persona — Phase 1 Revamp
+   ═══════════════════════════════════════════════════ */
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --radius-2xl: 1.25rem;
+  --radius-xl: 1rem;
+  --radius-lg: 0.75rem;
+  --radius-md: 0.5rem;
+
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Light (Default — Clean Minimal) ─── */
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --primary-subtle: rgba(37, 99, 235, 0.08);
+  --primary-glow: rgba(37, 99, 235, 0.15);
+
+  --secondary: #f97316;
+  --secondary-foreground: #ffffff;
+  --secondary-subtle: rgba(249, 115, 22, 0.08);
+
+  --accent: #f97316;
+  --accent-foreground: #ffffff;
+
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+
+  --border: #e2e8f0;
+  --input: #f1f5f9;
+  --ring: #2563eb;
+
+  --surface-1: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-3: #e2e8f0;
+
+  --status-smooth: #10b981;
+  --status-moderate: #f59e0b;
+  --status-congested: #ef4444;
+
+  --bottom-nav-h: 64px;
+
+  /* Shadows for Clean Minimal */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ─── Dark Mode ─── */
+.dark {
+  --background: #0c1220;
+  --foreground: #e2e8f0;
+
+  --card: #1a2332;
+  --card-foreground: #e2e8f0;
+
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --primary-subtle: rgba(59, 130, 246, 0.12);
+  --primary-glow: rgba(59, 130, 246, 0.2);
+
+  --secondary: #fb923c;
+  --secondary-foreground: #ffffff;
+  --secondary-subtle: rgba(251, 146, 60, 0.12);
+
+  --accent: #fb923c;
+  --accent-foreground: #ffffff;
+
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --input: #1e293b;
+  --ring: #3b82f6;
+
+  --surface-1: #1a2332;
+  --surface-2: #1e293b;
+  --surface-3: #334155;
+
+  --status-smooth: #34d399;
+  --status-moderate: #fbbf24;
+  --status-congested: #f87171;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════
+   BASE — Native App Feel
+   ═══════════════════════════════════════════════════ */
+
+@layer base {
+  html {
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior: none;
+    scroll-behavior: smooth;
+    height: 100%;
+  }
+
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    min-height: 100dvh;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* iOS safe-area padding utilities */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  ::selection {
+    background-color: var(--primary-subtle);
+    color: var(--primary);
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  * {
+    scrollbar-width: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   COMPONENTS — Clean Minimal Style
+   ═══════════════════════════════════════════════════ */
+
+@layer components {
+
+  /* ─── Clean Card ─── */
+  .clean-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .clean-card:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .clean-card:active {
+    transform: scale(0.98);
+  }
+
+  /* ─── Status Card with Left Accent Bar ─── */
+  .status-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-card);
+    padding: 1.25rem;
+    padding-left: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+  }
+
+  .status-card::before {
+    content: '';
+    position: absolute;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    left: 0;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .status-card.smooth::before {
+    background: var(--status-smooth);
+  }
+
+  .status-card.moderate::before {
+    background: var(--status-moderate);
+  }
+
+  .status-card.congested::before {
+    background: var(--status-congested);
+  }
+
+  .status-card:active {
+    transform: scale(0.98);
+  }
+
+  /* ─── Hero Status Banner ─── */
+  .hero-banner {
+    border-radius: var(--radius-2xl);
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-banner.clear {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+  }
+
+  .hero-banner.moderate {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border: 1px solid #fde68a;
+    color: #92400e;
+  }
+
+  .hero-banner.jammed {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+
+  .dark .hero-banner.clear {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.25);
+    color: #34d399;
+  }
+
+  .dark .hero-banner.moderate {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+  }
+
+  .dark .hero-banner.jammed {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #f87171;
+  }
+
+  /* ─── Haptic Button ─── */
+  .haptic-btn {
+    transition: transform 0.1s ease, opacity 0.1s ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .haptic-btn:active {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+
+  /* ─── Primary Button ─── */
+  .btn-primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-weight: 700;
+    font-size: 0.875rem;
+    border-radius: var(--radius-xl);
+    padding: 0.75rem 1.25rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.96);
+  }
+
+  /* ─── Pill Badge ─── */
+  .pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .pill-badge.smooth {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--status-smooth);
+  }
+
+  .pill-badge.moderate {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--status-moderate);
+  }
+
+  .pill-badge.congested {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--status-congested);
+  }
+
+  /* ─── Bottom Navigation ─── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom));
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding-top: 0.5rem;
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 100;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+  }
+
+  .dark .bottom-nav {
+    background: #0f1923;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.375rem 1.25rem;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 64px;
+  }
+
+  .nav-item .nav-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    transition: color 0.2s ease;
+  }
+
+  .nav-item.active .nav-label {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .nav-item.active {
+    background: var(--primary-subtle);
+  }
+
+  .nav-item:active {
+    transform: scale(0.9);
+  }
+
+  /* ─── Section Header ─── */
+  .section-header {
+    font-size: 1.125rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+  }
+
+  .section-subtitle {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    margin-top: 0.125rem;
+  }
+
+  /* ─── Input ─── */
+  .native-input {
+    background: var(--input);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    color: var(--foreground);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    width: 100%;
+  }
+
+  .native-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+
+  .native-input::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  /* ─── Filter Pill ─── */
+  .filter-pill {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted-foreground);
+  }
+
+  .filter-pill.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  .filter-pill:active {
+    transform: scale(0.95);
+  }
+
+  /* ─── Page spacing ─── */
+  .page-content {
+    padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 2rem);
+    min-height: 100dvh;
+  }
+
+  /* ─── Settings list item ─── */
+  .settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s ease;
+  }
+
+  .settings-item:last-child {
+    border-bottom: none;
+  }
+
+  .settings-item:active {
+    background: var(--muted);
+  }
+
+  /* ─── Toggle Switch ─── */
+  .toggle-switch {
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: var(--muted);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border: 1px solid var(--border);
+  }
+
+  .toggle-switch.active {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  }
+
+  .toggle-switch.active::after {
+    transform: translateX(18px);
+  }
+
+  /* ─── Threshold Slider ─── */
+  .threshold-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--muted);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .threshold-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+    transition: transform 0.15s ease;
+  }
+
+  .threshold-slider::-webkit-slider-thumb:active {
+    transform: scale(1.2);
+  }
+
+  .threshold-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+  }
+
+  /* ─── Incident Banner ─── */
+  .incident-banner {
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+  }
+
+  .dark .incident-banner {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   ANIMATIONS — Subtle & Native
+   ═══════════════════════════════════════════════════ */
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-dot {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease both;
+}
+
+.animate-nav-in {
+  animation: slide-in-bottom 0.3s ease both;
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+/* ─── Skeleton Loading ─── */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--muted) 25%, var(--surface-2) 50%, var(--muted) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-lg);
+}

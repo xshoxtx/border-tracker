@@ -1,0 +1,92 @@
+# CHANGELOG — Pathfinder Border Intelligence
+
+All notable changes to this project will be documented in this file.
+
+---
+
+## [v3.2.0] — 2026-03-02
+
+### Phase 7: Community & Viral ✅
+
+#### Added
+- **📸 Queue Camera Snap** — Camera-only photo uploads with GPS auto-detect, 15-min rate limit, community flagging (3 flags = auto-hide), 24h auto-purge
+- **🔗 Share Card** — Canvas-generated Instagram-story images (1080×1920px) with border status, Web Share API + download fallback
+- **🏆 Leaderboard** — Top 10 weekly contributors with badge tiers (Bronze/Silver/Gold/Diamond), aggregates snaps + chats + incident reports
+- **🚨 Incident Reports** — Structured reporting (System Down, Extra Counters, Road Closure, Other) with active incident banners + auto-post to community chat
+
+#### New Files
+- `src/lib/upload.ts` — Server-side image storage + GPS validation + auto-cleanup
+- `src/app/api/snaps/route.ts` — Queue snap GET + POST with file validation
+- `src/app/api/snaps/flag/route.ts` — Community flagging endpoint
+- `src/app/api/incidents/route.ts` — Incident report CRUD
+- `src/app/api/leaderboard/route.ts` — Contribution aggregation API
+- `src/components/QueueSnap.tsx` — Camera snap + live photo feed
+- `src/components/ShareCard.tsx` — Canvas image generator
+- `src/components/Leaderboard.tsx` — Ranked contributor list
+- `src/components/IncidentReport.tsx` — Incident form + active banners
+
+#### Modified
+- `prisma/schema.prisma` — Added `QueueSnap` + `IncidentReport` models
+- `src/components/BorderCard.tsx` — Added ShareCard button
+- `src/app/page.tsx` — Restructured Community tab (Incidents → Snaps → CrossingReport → Leaderboard → Chat)
+- `src/app/globals.css` — Added incident banner styles
+
+---
+
+## [v3.1.0] — 2026-02-27
+
+### Phase 6: Advanced Features ✅
+
+#### Added
+- **🔔 Personal Alert Threshold** — Slider in Settings (5-60 min) saved to localStorage
+- **🗺️ Live Map Integration** — QueueMap with CircleMarkers, color-coded status, per-direction popups
+- **📢 Telegram Jam Bot** — `@Intelligentborderbot` broadcasts to `@borderbrunei` channel
+- **🌐 Public API** — `GET /api/v1/borders` with CORS for developers
+- **💾 CrossingReport persistence** — Prisma `CrossingReport` model + `/api/crossing` API
+- **💬 ChatSystem wiring** — Connected to `/api/chat` Prisma endpoint with 10s auto-poll
+- **Map tab** — 4-tab bottom navigation (Home / Map / Chat / Settings)
+
+#### Fixed
+- **🛡️ CSP for map tiles** — Added `*.basemaps.cartocdn.com` to Content-Security-Policy via `.htaccess`
+- Removed duplicate CSP headers (Apache + Next.js conflict)
+
+#### Tech
+- Added `next.config.ts` security headers (CSP, connect-src for TomTom/Telegram/FCM)
+- Prisma schema: `CrossingReport` model
+- Lazy-loaded QueueMap to prevent SSR issues with Leaflet
+
+---
+
+## [v3.0.0] — 2026-02-25
+
+### Phase 5: Competitive Features ✅
+
+#### Added
+- StatusBanner (Jam Panic + Status Overview)
+- BestTimeWidget (6 time slots + weekly pattern)
+- CrossingReport ("I Just Crossed" form)
+- HolidayAlert (21 BN/MY holidays 2026)
+- NearestBorder (geolocation-based)
+- BorderCard (new design with status pill)
+- SettingsPage (push toggle, privacy, cache clear)
+- /miri travel guide page
+
+---
+
+## [v2.0.0] — 2026-02-22
+
+### Phase 4: PWA iOS Fix ✅
+- Fixed manifest.json for iOS PWA
+- Added apple-touch-icon, iOS meta tags
+- Removed TravelDropdown
+
+---
+
+## [v1.0.0] — 2026-02-20
+
+### Phase 2-3: Native Redesign + Data Source ✅
+- Full design system rebuild (OLED dark #060d1a)
+- Airbnb Cereal font, Phosphor Icons
+- Glassmorphism cards with spring animations
+- TomTom Traffic Flow API (replaced borderkiu.com)
+- Removed admin panel (security risk)

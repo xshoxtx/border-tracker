@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model FcmToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  user      String
+  message   String   @db.Text
+  time      String
+  createdAt DateTime @default(now())
+}
+
+model CrossingReport {
+  id        Int      @id @default(autoincrement())
+  border    String
+  waitTime  String
+  note      String?  @db.Text
+  createdAt DateTime @default(now())
+}
+
+model QueueSnap {
+  id        Int      @id @default(autoincrement())
+  border    String
+  imageUrl  String
+  lat       Float?
+  lng       Float?
+  nickname  String   @default("Traveler")
+  flags     Int      @default(0)
+  hidden    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model IncidentReport {
+  id        Int      @id @default(autoincrement())
+  border    String
+  type      String
+  note      String?  @db.Text
+  nickname  String   @default("Traveler")
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
