@@ -55,13 +55,28 @@ export const viewport: Viewport = {
   // NOTE: maximumScale removed — allows native pinch-zoom (accessibility)
 };
 
+// Blocking script to apply saved theme BEFORE React hydrates (prevents flash)
+const themeScript = `
+(function(){
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') {
+      document.documentElement.className = document.documentElement.className.replace(/\\b(dark|light)\\b/g, '') + ' ' + t;
+    }
+  } catch(e){}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`dark ${airbnbCereal.variable}`}>
+    <html lang="en" className={`dark ${airbnbCereal.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body
         className="antialiased min-h-dvh bg-background text-foreground"
         style={{ fontFamily: "var(--font-cereal), system-ui, -apple-system, sans-serif" }}
