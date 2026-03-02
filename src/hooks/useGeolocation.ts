@@ -89,7 +89,7 @@ export function useGeolocation(): UseGeolocationReturn {
 // ─── Border Coordinates ───
 export const BORDER_COORDS: Record<string, { lat: number; lng: number; name: string; shortName: string }> = {
     "Sungai Tujuh": { lat: 4.5852, lng: 114.0723, name: "CIQ Sungai Tujuh", shortName: "STJ" },
-    "Kuala Lurah": { lat: 4.8583, lng: 115.3217, name: "CIQ Kuala Lurah", shortName: "KLR" },
+    "Kuala Lurah": { lat: 4.7407, lng: 114.8135, name: "CIQ Kuala Lurah", shortName: "KLR" },
     "Ujung Jalan": { lat: 4.6181, lng: 115.2464, name: "CIQ Ujung Jalan", shortName: "UJJ" },
     "Mengkalap": { lat: 4.5600, lng: 115.4000, name: "CIQ Mengkalap", shortName: "MKP" },
 };

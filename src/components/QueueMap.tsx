@@ -18,7 +18,7 @@ interface QueueMapProps {
 
 const BORDER_MARKERS: { name: string; coords: [number, number]; directions: string[] }[] = [
     { name: "Sungai Tujuh", coords: [4.5878, 114.0753], directions: ["Brunei ➔ Miri", "Miri ➔ Brunei"] },
-    { name: "Kuala Lurah", coords: [4.7431, 114.8214], directions: ["Brunei ➔ Tedungan", "Tedungan ➔ Brunei"] },
+    { name: "Kuala Lurah", coords: [4.7407, 114.8135], directions: ["Brunei ➔ Tedungan", "Tedungan ➔ Brunei"] },
     { name: "Ujung Jalan", coords: [4.8464, 115.0294], directions: ["Brunei ➔ Pandaruan", "Pandaruan ➔ Brunei"] },
     { name: "Mengkalap", coords: [4.8711, 115.1118], directions: ["Brunei ➔ Lawas", "Lawas ➔ Brunei"] },
 ];

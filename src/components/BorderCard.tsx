@@ -8,8 +8,8 @@ import { ShareCard } from "@/components/ShareCard";
 const NAV_COORDS: Record<string, { lat: number; lng: number }> = {
     "Brunei ➔ Miri": { lat: 4.5852, lng: 114.0723 },
     "Miri ➔ Brunei": { lat: 4.5852, lng: 114.0723 },
-    "Brunei ➔ Tedungan": { lat: 4.8583, lng: 115.3217 },
-    "Tedungan ➔ Brunei": { lat: 4.8583, lng: 115.3217 },
+    "Brunei ➔ Tedungan": { lat: 4.7407, lng: 114.8135 },
+    "Tedungan ➔ Brunei": { lat: 4.7407, lng: 114.8135 },
     "Brunei ➔ Pandaruan": { lat: 4.6181, lng: 115.2464 },
     "Pandaruan ➔ Brunei": { lat: 4.6181, lng: 115.2464 },
     "Brunei ➔ Lawas": { lat: 4.5600, lng: 115.4000 },
