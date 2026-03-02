@@ -74,21 +74,56 @@ export const NearestBorder = () => {
 
     // Denied
     if (denied) {
+        const isAndroid = typeof navigator !== "undefined" && /android/i.test(navigator.userAgent);
         return (
             <motion.div
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="clean-card p-4"
+                className="clean-card p-4 space-y-3"
             >
                 <div className="flex items-center gap-3">
                     <Warning size={20} weight="fill" style={{ color: "var(--status-moderate)" }} />
                     <div>
                         <p className="text-sm font-bold">Location Access Denied</p>
                         <p className="text-[11px]" style={{ color: "var(--muted-foreground)" }}>
-                            Enable in browser settings to see nearest border
+                            {isAndroid
+                                ? "Enable location in Chrome settings for this site"
+                                : "Enable in Settings → Safari → Location Services"}
                         </p>
                     </div>
                 </div>
+
+                {/* Step-by-step instructions */}
+                <div className="px-3 py-2.5 rounded-xl text-[11px] space-y-1.5"
+                    style={{ background: "var(--muted)", color: "var(--muted-foreground)" }}>
+                    {isAndroid ? (
+                        <>
+                            <p className="font-bold" style={{ color: "var(--foreground)" }}>📱 How to enable on Android:</p>
+                            <p>1. Tap the <strong>⋮ menu</strong> (top right) → <strong>Settings</strong></p>
+                            <p>2. <strong>Site settings</strong> → <strong>Location</strong></p>
+                            <p>3. Find this site → set to <strong>Allow</strong></p>
+                            <p>4. Come back and tap <strong>Try Again</strong></p>
+                        </>
+                    ) : (
+                        <>
+                            <p className="font-bold" style={{ color: "var(--foreground)" }}>📱 How to enable:</p>
+                            <p>1. Open <strong>Settings</strong> → <strong>Safari</strong> (or browser)</p>
+                            <p>2. <strong>Location</strong> → set to <strong>Allow</strong></p>
+                            <p>3. Come back and tap <strong>Try Again</strong></p>
+                        </>
+                    )}
+                </div>
+
+                {/* Retry button */}
+                <button
+                    onClick={requestLocation}
+                    className="haptic-btn btn-primary text-xs px-4 py-2 w-full rounded-xl font-bold"
+                >
+                    <span className="flex items-center justify-center gap-1.5">
+                        <Crosshair size={14} weight="bold" />
+                        Try Again
+                    </span>
+                </button>
             </motion.div>
         );
     }

@@ -24,6 +24,7 @@ import {
   GearSix,
   Camera,
   ChatText,
+  X,
   Trophy,
   MapTrifold,
 } from "@phosphor-icons/react";
@@ -236,6 +237,17 @@ export default function Home() {
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                     className="space-y-4"
                   >
+                    {/* Close chat button */}
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => setCommunitySubTab("feed")}
+                        className="haptic-btn flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold"
+                        style={{ background: "var(--muted)", color: "var(--muted-foreground)" }}
+                      >
+                        <X size={12} weight="bold" />
+                        Close Chat
+                      </button>
+                    </div>
                     <CrossingReport />
                     <ChatSystem />
                   </motion.div>
