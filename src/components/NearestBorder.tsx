@@ -151,13 +151,25 @@ export const NearestBorder = () => {
                                     </span>
                                 )}
                             </div>
-                            <div className="text-right">
-                                <p className="text-sm font-bold">{item.distance.toFixed(1)} km</p>
-                                <p className="text-[10px] flex items-center gap-1 justify-end"
-                                    style={{ color: "var(--muted-foreground)" }}>
-                                    <Car size={10} weight="fill" />
-                                    {estimateDriveTime(item.distance)}
-                                </p>
+                            <div className="flex items-center gap-2">
+                                <div className="text-right">
+                                    <p className="text-sm font-bold">{item.distance.toFixed(1)} km</p>
+                                    <p className="text-[10px] flex items-center gap-1 justify-end"
+                                        style={{ color: "var(--muted-foreground)" }}>
+                                        <Car size={10} weight="fill" />
+                                        {estimateDriveTime(item.distance)}
+                                    </p>
+                                </div>
+                                <a
+                                    href={`https://www.google.com/maps/dir/?api=1&destination=${BORDER_COORDS[item.name]?.lat},${BORDER_COORDS[item.name]?.lng}&travelmode=driving`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="haptic-btn h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                                    style={{ background: "rgba(51,124,253,0.1)" }}
+                                    title="Navigate"
+                                >
+                                    <NavigationArrow size={12} weight="fill" style={{ color: "var(--primary)" }} />
+                                </a>
                             </div>
                         </div>
                     ))}

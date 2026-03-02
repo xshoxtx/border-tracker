@@ -16,6 +16,7 @@ import { QueueSnap } from "@/components/QueueSnap";
 import { IncidentReport } from "@/components/IncidentReport";
 import { IncidentBanners } from "@/components/IncidentBanners";
 import { Leaderboard } from "@/components/Leaderboard";
+import { QueueHeatmap } from "@/components/QueueHeatmap";
 import {
   House,
   ChatsCircle,
@@ -185,6 +186,9 @@ export default function Home() {
 
               {/* Best Time Widget */}
               <BestTimeWidget />
+
+              {/* Queue Patterns Heatmap */}
+              <QueueHeatmap />
             </motion.div>
           )}
 

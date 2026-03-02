@@ -1,8 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Car, Clock } from "@phosphor-icons/react";
+import { Car, Clock, NavigationArrow } from "@phosphor-icons/react";
 import { ShareCard } from "@/components/ShareCard";
+
+// Map border direction labels → destination GPS coords
+const NAV_COORDS: Record<string, { lat: number; lng: number }> = {
+    "Brunei ➔ Miri": { lat: 4.5852, lng: 114.0723 },
+    "Miri ➔ Brunei": { lat: 4.5852, lng: 114.0723 },
+    "Brunei ➔ Tedungan": { lat: 4.8583, lng: 115.3217 },
+    "Tedungan ➔ Brunei": { lat: 4.8583, lng: 115.3217 },
+    "Brunei ➔ Pandaruan": { lat: 4.6181, lng: 115.2464 },
+    "Pandaruan ➔ Brunei": { lat: 4.6181, lng: 115.2464 },
+    "Brunei ➔ Lawas": { lat: 4.5600, lng: 115.4000 },
+    "Lawas ➔ Brunei": { lat: 4.5600, lng: 115.4000 },
+};
 
 interface BorderCardProps {
     location: string;
@@ -39,6 +51,11 @@ export const BorderCard = ({ location, queueTime, status, lastUpdated, loading }
         congested: "var(--status-congested)",
     };
 
+    const coords = NAV_COORDS[location];
+    const navUrl = coords
+        ? `https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}&travelmode=driving`
+        : null;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 6 }}
@@ -72,7 +89,21 @@ export const BorderCard = ({ location, queueTime, status, lastUpdated, loading }
                     </div>
                 </div>
 
-                <ShareCard border={location} queueTime={queueTime} status={status} />
+                <div className="flex flex-col items-center gap-2">
+                    <ShareCard border={location} queueTime={queueTime} status={status} />
+                    {navUrl && (
+                        <a
+                            href={navUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="haptic-btn h-8 w-8 rounded-xl flex items-center justify-center"
+                            style={{ background: "rgba(51,124,253,0.1)" }}
+                            title="Navigate"
+                        >
+                            <NavigationArrow size={16} weight="fill" style={{ color: "var(--primary)" }} />
+                        </a>
+                    )}
+                </div>
             </div>
         </motion.div>
     );

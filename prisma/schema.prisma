@@ -56,3 +56,17 @@ model IncidentReport {
   resolved  Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model QueueHistory {
+  id            Int      @id @default(autoincrement())
+  border        String                   // e.g. "Brunei ➔ Miri"
+  queueMinutes  Int                      // estimated queue time
+  status        String                   // smooth | moderate | congested
+  speed         Float                    // currentSpeed from TomTom
+  freeFlowSpeed Float                    // baseline freeflow
+  dayOfWeek     Int                      // 0=Sun, 1=Mon ... 6=Sat
+  hour          Int                      // 0-23 (Asia/Kuching timezone)
+  createdAt     DateTime @default(now())
+
+  @@index([border, dayOfWeek, hour])
+}
