@@ -32,7 +32,8 @@ export const PWAAwareness = () => {
             /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
         setIsIOS(ios);
 
-        if (!standalone) {
+        // Only show for iOS — Android Chrome has its own built-in install prompt
+        if (!standalone && ios) {
             const timer = setTimeout(() => setIsVisible(true), 2500);
             return () => clearTimeout(timer);
         }

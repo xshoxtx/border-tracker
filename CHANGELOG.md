@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.3.1] — 2026-03-03
+
+### Added
+- **📍 Lokasi (Location Permission) Setting** — New section in Settings with live permission status (🟢 Dibenarkan / 🟡 Belum / 🔴 Disekat), one-tap Enable button, and platform-specific step-by-step instructions (Android Chrome/PWA, iOS Safari, Desktop) in Bahasa Melayu
+
+### Modified
+- `src/components/SettingsPage.tsx` — Added Location section with `navigator.permissions.query` auto-detect + `onchange` listener for real-time status updates
+
+---
+
 ## [v3.3.0] — 2026-03-02
 
 ### Phase 8: Smart Intelligence ✅

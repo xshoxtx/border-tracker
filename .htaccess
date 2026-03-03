@@ -3,6 +3,7 @@
 # CSP — allow CARTO map tiles, TomTom API, Telegram, FCM
 <IfModule mod_headers.c>
   Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://images.unsplash.com https://cdn.sanity.io; font-src 'self' data:; connect-src 'self' https://*.basemaps.cartocdn.com https://api.tomtom.com https://api.telegram.org https://fcm.googleapis.com; worker-src 'self' blob:; frame-src 'self'"
+  Header set Permissions-Policy "geolocation=(self)"
 </IfModule>
 
 # ALESA PROXY START

@@ -15,11 +15,30 @@ import {
     getNearestBorder,
     estimateDriveTime,
 } from "@/hooks/useGeolocation";
+import { useState, useEffect } from "react";
 
 export const NearestBorder = () => {
     const { position, loading, error, requestLocation, denied } = useGeolocation();
+    const [locationEnabled, setLocationEnabled] = useState(true);
 
-    // Not yet requested
+    // Respect the location_enabled setting from Settings page
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const saved = localStorage.getItem("location_enabled");
+            // Default to true if never set (first-time users still see it)
+            setLocationEnabled(saved === null ? true : saved === "true");
+        }
+        // Listen for storage changes (in case toggle changes while on main page)
+        const handleStorage = () => {
+            const saved = localStorage.getItem("location_enabled");
+            setLocationEnabled(saved === null ? true : saved === "true");
+        };
+        window.addEventListener("storage", handleStorage);
+        return () => window.removeEventListener("storage", handleStorage);
+    }, []);
+
+    // If location is disabled in Settings, hide this component
+    if (!locationEnabled) return null;
     if (!position && !loading && !error) {
         return (
             <motion.div

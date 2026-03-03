@@ -1,5 +1,5 @@
 # project.md — Pathfinder Border Intelligence
-**Last Updated**: 2026-03-02 | **Version**: v3.3.0 | **ALESA**: v14.3.0 Sentinel Mode
+**Last Updated**: 2026-03-03 | **Version**: v3.3.1 | **ALESA**: v14.3.0 Sentinel Mode
 
 ---
 
@@ -92,6 +92,7 @@
 | 9 | **💬 Chat Close Button** | ✅ Close button switches to Feed |
 | 10 | **📍 Android Location UX** | ✅ Platform-specific instructions + retry |
 | 11 | **🎨 PWA Icon Redesign** | ✅ New location pin + road icon |
+| 12 | **📍 Lokasi Permission Setting** | ✅ Settings section — live status, enable button, platform instructions (BM) |
 
 ---
 

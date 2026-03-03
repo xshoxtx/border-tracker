@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
               "frame-src 'self'",
             ].join("; "),
           },
+          {
+            key: "Permissions-Policy",
+            value: "geolocation=(self)",
+          },
         ],
       },
     ];

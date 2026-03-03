@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
     Bell,
@@ -11,14 +11,96 @@ import {
     Globe,
     Trash,
     ShareNetwork,
+    MapPin,
+    CheckCircle,
+    XCircle,
+    Warning,
+    Crosshair,
 } from "@phosphor-icons/react";
 import { ThemeToggle } from "./ThemeToggle";
+
+type LocationStatus = "granted" | "denied" | "prompt" | "unavailable" | "loading";
 
 export const SettingsPage = () => {
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const [alertThreshold, setAlertThreshold] = useState(20);
     const [showPDP, setShowPDP] = useState(false);
     const [showAbout, setShowAbout] = useState(false);
+    const [locationStatus, setLocationStatus] = useState<LocationStatus>("loading");
+    const [showLocationHelp, setShowLocationHelp] = useState(false);
+    const [locationLoading, setLocationLoading] = useState(false);
+    const [locationEnabled, setLocationEnabled] = useState(false);
+
+    // Load location preference from localStorage on mount
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const saved = localStorage.getItem("location_enabled");
+            setLocationEnabled(saved === "true");
+        }
+    }, []);
+
+    // Toggle location on/off
+    const handleToggleLocation = () => {
+        const newValue = !locationEnabled;
+        setLocationEnabled(newValue);
+        localStorage.setItem("location_enabled", String(newValue));
+        if (newValue) {
+            // Turning ON — trigger browser permission if needed
+            if (locationStatus === "prompt") {
+                handleRequestLocation();
+            }
+        }
+    };
+
+    // Detect platform
+    const isAndroid = typeof navigator !== "undefined" && /android/i.test(navigator.userAgent);
+    const isIOS = typeof navigator !== "undefined" && /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+    // Check location permission on mount
+    const checkLocationPermission = useCallback(async () => {
+        if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+            setLocationStatus("unavailable");
+            return;
+        }
+        if ("permissions" in navigator) {
+            try {
+                const result = await navigator.permissions.query({ name: "geolocation" as PermissionName });
+                setLocationStatus(result.state as LocationStatus);
+                result.onchange = () => {
+                    setLocationStatus(result.state as LocationStatus);
+                };
+            } catch {
+                // Fallback: permissions API not supported (some iOS browsers)
+                setLocationStatus("prompt");
+            }
+        } else {
+            setLocationStatus("prompt");
+        }
+    }, []);
+
+    useEffect(() => {
+        checkLocationPermission();
+    }, [checkLocationPermission]);
+
+    // Request location permission
+    const handleRequestLocation = () => {
+        setLocationLoading(true);
+        navigator.geolocation.getCurrentPosition(
+            () => {
+                setLocationStatus("granted");
+                setLocationLoading(false);
+                setShowLocationHelp(false);
+            },
+            (err) => {
+                if (err.code === err.PERMISSION_DENIED) {
+                    setLocationStatus("denied");
+                    setShowLocationHelp(true);
+                }
+                setLocationLoading(false);
+            },
+            { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+        );
+    };
 
     // Load alert threshold from localStorage
     useState(() => {
@@ -114,6 +196,155 @@ export const SettingsPage = () => {
                     </div>
                     <p className="text-[10px] mt-2" style={{ color: "var(--muted-foreground)" }}>
                         🔔 Alert me when any border queue is under {alertThreshold} minutes
+                    </p>
+                </div>
+            </div>
+
+            {/* ─── Location ─── */}
+            <div className="clean-card overflow-hidden">
+                <div className="px-5 py-3 font-bold text-xs uppercase tracking-wider"
+                    style={{ color: "var(--muted-foreground)", borderBottom: "1px solid var(--border)" }}>
+                    Location
+                </div>
+
+                {/* Toggle row */}
+                <div className="settings-item">
+                    <div className="flex items-center gap-3">
+                        <MapPin size={20} weight="fill" style={{ color: locationEnabled ? "var(--status-smooth)" : "var(--muted-foreground)" }} />
+                        <div>
+                            <p className="text-sm font-semibold">Share Location</p>
+                            <p className="text-[11px]" style={{ color: "var(--muted-foreground)" }}>
+                                {locationEnabled
+                                    ? locationStatus === "granted"
+                                        ? "Active — showing nearest border"
+                                        : locationStatus === "denied"
+                                            ? "Enabled but browser blocked"
+                                            : "Enabled — tap to allow in browser"
+                                    : "Disabled — nearest border hidden"}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        className={`toggle-switch ${locationEnabled ? "active" : ""}`}
+                        onClick={handleToggleLocation}
+                        disabled={locationLoading}
+                    />
+                </div>
+
+                {/* Browser permission status (only when toggle is ON) */}
+                {locationEnabled && locationStatus !== "loading" && (
+                    <div className="px-5 py-2.5 flex items-center gap-2" style={{ borderTop: "1px solid var(--border)" }}>
+                        {locationStatus === "granted" ? (
+                            <CheckCircle size={14} weight="fill" style={{ color: "var(--status-smooth)" }} />
+                        ) : locationStatus === "denied" ? (
+                            <XCircle size={14} weight="fill" style={{ color: "var(--status-congested)" }} />
+                        ) : (
+                            <Warning size={14} weight="fill" style={{ color: "var(--status-moderate)" }} />
+                        )}
+                        <span className="text-[11px] font-semibold" style={{
+                            color: locationStatus === "granted" ? "var(--status-smooth)"
+                                : locationStatus === "denied" ? "var(--status-congested)"
+                                    : "var(--status-moderate)"
+                        }}>
+                            {locationStatus === "granted" && "Browser permission: Allowed ✓"}
+                            {locationStatus === "denied" && "Browser permission: Blocked ✗"}
+                            {locationStatus === "prompt" && "Browser permission: Waiting..."}
+                            {locationStatus === "unavailable" && "Not supported on this device"}
+                        </span>
+                    </div>
+                )}
+
+                {/* Request permission button (when enabled but not yet granted) */}
+                {locationEnabled && locationStatus === "prompt" && (
+                    <div className="px-5 py-3" style={{ borderTop: "1px solid var(--border)" }}>
+                        <button
+                            onClick={handleRequestLocation}
+                            disabled={locationLoading}
+                            className="haptic-btn btn-primary text-xs px-4 py-2.5 w-full rounded-xl font-bold"
+                        >
+                            <span className="flex items-center justify-center gap-2">
+                                <Crosshair size={14} weight="bold" className={locationLoading ? "animate-spin" : ""} />
+                                {locationLoading ? "Requesting..." : "Allow in Browser"}
+                            </span>
+                        </button>
+                    </div>
+                )}
+
+                {/* Platform-specific instructions when denied */}
+                {locationEnabled && locationStatus === "denied" && (
+                    <>
+                        <button
+                            className="settings-item w-full"
+                            onClick={() => setShowLocationHelp(!showLocationHelp)}
+                            style={{ borderTop: "1px solid var(--border)" }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <Warning size={18} weight="fill" style={{ color: "var(--status-moderate)" }} />
+                                <p className="text-xs font-bold" style={{ color: "var(--status-moderate)" }}>
+                                    📱 How to enable location
+                                </p>
+                            </div>
+                            <CaretRight size={14} weight="bold"
+                                style={{ color: "var(--muted-foreground)", transform: showLocationHelp ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} />
+                        </button>
+
+                        {showLocationHelp && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                className="px-5 py-4 text-[11px] space-y-2"
+                                style={{ background: "var(--muted)", color: "var(--muted-foreground)" }}
+                            >
+                                {isAndroid ? (
+                                    <>
+                                        <p className="font-bold text-xs" style={{ color: "var(--foreground)" }}>📱 Android (Chrome / PWA):</p>
+                                        <p>1. Tap the <strong>⋮</strong> icon (top right) → <strong>Settings</strong></p>
+                                        <p>2. <strong>Site settings</strong> → <strong>Location</strong></p>
+                                        <p>3. Find this site → set to <strong>Allow</strong></p>
+                                        <p>4. Come back and tap <strong>Try Again</strong></p>
+                                        <p className="mt-2 pt-2" style={{ borderTop: "1px solid var(--border)" }}>
+                                            💡 <strong>For PWA</strong>: Open Chrome → ⋮ → Settings → Site settings → Location → find &quot;border.creativepresslab.com&quot; → Allow
+                                        </p>
+                                    </>
+                                ) : isIOS ? (
+                                    <>
+                                        <p className="font-bold text-xs" style={{ color: "var(--foreground)" }}>📱 iPhone / iPad:</p>
+                                        <p>1. Open <strong>Settings</strong></p>
+                                        <p>2. Scroll to <strong>Safari</strong> (or your browser)</p>
+                                        <p>3. Tap <strong>Location</strong> → select <strong>Allow</strong></p>
+                                        <p>4. Come back and tap <strong>Try Again</strong></p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="font-bold text-xs" style={{ color: "var(--foreground)" }}>🖥️ Desktop Browser:</p>
+                                        <p>1. Click the 🔒 icon in the address bar</p>
+                                        <p>2. Find <strong>Location</strong> → set to <strong>Allow</strong></p>
+                                        <p>3. Refresh the page and tap <strong>Try Again</strong></p>
+                                    </>
+                                )}
+                            </motion.div>
+                        )}
+
+                        {/* Try Again button */}
+                        <div className="px-5 py-3" style={{ borderTop: "1px solid var(--border)" }}>
+                            <button
+                                onClick={handleRequestLocation}
+                                disabled={locationLoading}
+                                className="haptic-btn btn-primary text-xs px-4 py-2.5 w-full rounded-xl font-bold"
+                            >
+                                <span className="flex items-center justify-center gap-2">
+                                    <Crosshair size={14} weight="bold" className={locationLoading ? "animate-spin" : ""} />
+                                    {locationLoading ? "Checking..." : "Try Again"}
+                                </span>
+                            </button>
+                        </div>
+                    </>
+                )}
+
+                {/* Privacy note */}
+                <div className="px-5 py-2.5" style={{ borderTop: "1px solid var(--border)" }}>
+                    <p className="text-[10px]" style={{ color: "var(--muted-foreground)" }}>
+                        🔒 Your location is never stored or shared. Only used to calculate distance to borders.
                     </p>
                 </div>
             </div>
