@@ -93,3 +93,35 @@
 - **Fix**: Added platform-specific step-by-step instructions (Android: Chrome Site Settings, iOS: Safari Location) + Try Again retry button.
 - **Lesson**: Location denied states need actionable guidance, not just "access denied" text.
 
+---
+
+### [2026-03-03] Location Toggle — App-Level vs Browser-Level Permissions
+- **Insight**: Two separate layers of control needed: (1) **App toggle** in Settings (localStorage `location_enabled`) controls whether the app even attempts to use location, (2) **Browser permission** (`navigator.permissions.query`) is the OS-level gate.
+- **Pattern**: Toggle OFF → `NearestBorder` returns null, no geolocation calls. Toggle ON → triggers `getCurrentPosition()` which prompts browser if needed.
+- **Lesson**: When building privacy-sensitive features, give users BOTH app-level and browser-level control. The app toggle is faster/friendlier than navigating to browser settings.
+
+### [2026-03-03] PWA Install Banner — iOS Only
+- **Problem**: Custom PWA install banner was showing on Android, competing with Chrome's native `beforeinstallprompt` banner.
+- **Fix**: `PWAAwareness.tsx` now only renders for iOS users. Android Chrome handles install prompt automatically.
+- **Lesson**: Don't duplicate native browser functionality. Android Chrome's built-in install prompt is superior to custom banners.
+
+### [2026-03-03] Permissions-Policy Header for PWA Geolocation
+- **Problem**: PWA standalone mode on some Android devices silently blocks geolocation even when site has granted permission.
+- **Fix**: Added `Permissions-Policy: geolocation=(self)` in both `next.config.ts` (for Next.js responses) and `.htaccess` (for Apache initial load).
+- **Lesson**: PWAs running in standalone mode may need explicit Permissions-Policy headers. Setting headers in both the app framework AND the web server ensures coverage for all request paths.
+
+### [2026-03-03] User Favorites — localStorage + Parent-Controlled State
+- **Pattern**: Favorites stored as JSON array in localStorage (`favorite_borders`). Parent component (`page.tsx`) owns state, passes `isFavorite` + `onFavoriteToggle` as props to `BorderCard`.
+- **Key decision**: Favorites section appears ABOVE regular border groups (only in "All" filter mode), giving instant value without disrupting existing layout.
+- **Lesson**: For simple user preferences (no auth needed), localStorage + React state is simpler and faster than a database-backed solution.
+
+### [2026-03-03] Crossing Timer — Persistent Stopwatch Pattern
+- **Challenge**: Timer must survive page close, tab switch, and app restart in PWA.
+- **Solution**: Store `{ border, startTime, running, elapsed }` in localStorage. On reload, if `running=true`, recalculate elapsed from `Date.now() - startTime` — no drift.
+- **Pattern**: Use absolute `startTime` (epoch ms) instead of relative elapsed— this makes timer persistence trivial and accurate across restarts.
+- **Lesson**: For persistent timers, always store the START time, not the elapsed time. Elapsed can be derived from start time on reload.
+
+### [2026-03-03] GitHub PAT Token Expiry
+- **Problem**: `gh auth` token expired, causing `git push` to fail with "Invalid username or token."
+- **Fix**: Generated new Personal Access Token (PAT) and re-authenticated via `gh auth login --with-token`.
+- **Lesson**: PAT tokens have expiry dates. Check `gh auth status` first before attempting push. Current token expires Apr 1, 2026.
