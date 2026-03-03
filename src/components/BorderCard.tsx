@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Car, Clock, NavigationArrow } from "@phosphor-icons/react";
+import { Car, Clock, NavigationArrow, Star } from "@phosphor-icons/react";
 import { ShareCard } from "@/components/ShareCard";
 
 // Map border direction labels → destination GPS coords
@@ -22,9 +22,11 @@ interface BorderCardProps {
     status: "smooth" | "moderate" | "congested";
     lastUpdated: string;
     loading?: boolean;
+    isFavorite?: boolean;
+    onFavoriteToggle?: (location: string) => void;
 }
 
-export const BorderCard = ({ location, queueTime, status, lastUpdated, loading }: BorderCardProps) => {
+export const BorderCard = ({ location, queueTime, status, lastUpdated, loading, isFavorite, onFavoriteToggle }: BorderCardProps) => {
     if (loading) {
         return (
             <div className="status-card smooth">
@@ -65,10 +67,24 @@ export const BorderCard = ({ location, queueTime, status, lastUpdated, loading }
         >
             <div className="flex items-center justify-between">
                 <div className="flex-1">
-                    {/* Location name */}
+                    {/* Location name + favorite star */}
                     <div className="flex items-center gap-2 mb-2">
                         <Car size={16} weight="fill" style={{ color: statusColors[status] }} />
-                        <span className="text-sm font-bold">{location}</span>
+                        <span className="text-sm font-bold flex-1">{location}</span>
+                        {onFavoriteToggle && (
+                            <motion.button
+                                whileTap={{ scale: 1.3 }}
+                                onClick={(e) => { e.stopPropagation(); onFavoriteToggle(location); }}
+                                className="haptic-btn p-1 -mr-1"
+                                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                            >
+                                <Star
+                                    size={18}
+                                    weight={isFavorite ? "fill" : "regular"}
+                                    style={{ color: isFavorite ? "#ff824c" : "var(--muted-foreground)", transition: "color 0.2s" }}
+                                />
+                            </motion.button>
+                        )}
                     </div>
 
                     {/* Queue time — BIG */}

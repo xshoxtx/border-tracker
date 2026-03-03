@@ -1,5 +1,5 @@
 # project.md — Pathfinder Border Intelligence
-**Last Updated**: 2026-03-03 | **Version**: v3.3.1 | **ALESA**: v14.3.0 Sentinel Mode
+**Last Updated**: 2026-03-03 | **Version**: v3.4.0 | **ALESA**: v14.3.0 Sentinel Mode
 
 ---
 
@@ -96,14 +96,14 @@
 
 ---
 
-## 📋 Phase 9: Analytics & Polish
-| # | Feature | Description |
+## ✅ Phase 9: Analytics & Polish (IN PROGRESS 2026-03-03)
+| # | Feature | Status |
 |---|---|---|
-| 1 | **📊 Weekly Jam Report** | Auto-generated weekly traffic summary → Telegram broadcast |
-| 2 | **🗺️ Live Traffic Map** | Leaflet map with color-coded border pins |
-| 3 | **⭐ User Favorites** | Save preferred border, show first in Home tab |
-| 4 | **⏱️ Crossing Timer** | Track actual wait time at border |
-| 5 | **🌐 Multi-language** | Malay/English toggle |
+| 1 | **⭐ User Favorites** | ✅ Star icon on BorderCard, favorites-first rendering, localStorage |
+| 2 | **⏱️ Crossing Timer** | ✅ Stopwatch with border picker, localStorage persistence, save to API |
+| 3 | **📊 Weekly Jam Report** | ⬜ Planned |
+| 4 | **🗺️ Live Traffic Map** | ⬜ Planned |
+| 5 | **🌐 Multi-language** | ⬜ Planned |
 
 ---
 
@@ -129,7 +129,8 @@ src/components/
   ChatSystem.tsx       — Community chat
   CurrencyWidget.tsx   — BND/MYR live exchange rate
   SettingsPage.tsx     — App settings & privacy
-  PWAAwareness.tsx     — iOS/Android install prompt
+  PWAAwareness.tsx     — iOS install prompt
+  CrossingTimer.tsx    — Border crossing stopwatch
   ThemeToggle.tsx      — Dark/Light toggle
 
 src/hooks/

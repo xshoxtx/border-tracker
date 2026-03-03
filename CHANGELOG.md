@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.4.0] — 2026-03-03
+
+### Phase 9: User Favorites + Crossing Timer ✅
+
+#### Added
+- **⭐ User Favorites** — Star icon on each `BorderCard`, tap to favorite. Favorited borders appear first in Home tab with "Your Favorites" section header. Saved in localStorage, persists across sessions
+- **⏱️ Crossing Timer** (`CrossingTimer.tsx`) — Stopwatch-style timer to track actual wait time at border. Border picker, start/stop/save/reset controls, localStorage persistence (timer survives page close), auto-post to `/api/crossing` on save
+
+#### Modified
+- `src/components/BorderCard.tsx` — Added `Star` icon (Phosphor), `isFavorite` + `onFavoriteToggle` props, brand orange `#ff824c` filled star with scale animation
+- `src/app/page.tsx` — Favorites state from localStorage, "Your Favorites" section rendering, `CrossingTimer` positioned below `NearestBorder`
+
+---
+
 ## [v3.3.1] — 2026-03-03
 
 ### Added

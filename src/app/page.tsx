@@ -18,6 +18,7 @@ import { IncidentBanners } from "@/components/IncidentBanners";
 import { Leaderboard } from "@/components/Leaderboard";
 import { QueueHeatmap } from "@/components/QueueHeatmap";
 import { BorderWeather } from "@/components/BorderWeather";
+import { CrossingTimer } from "@/components/CrossingTimer";
 import {
   House,
   ChatsCircle,
@@ -27,6 +28,7 @@ import {
   X,
   Trophy,
   MapTrifold,
+  Star,
 } from "@phosphor-icons/react";
 
 type TabId = "home" | "community" | "settings";
@@ -40,6 +42,25 @@ export default function Home() {
   const [trafficData, setTrafficData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeBorder, setActiveBorder] = useState("All");
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  // Load favorites from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("favorite_borders");
+      if (saved) setFavorites(JSON.parse(saved));
+    }
+  }, []);
+
+  const handleFavoriteToggle = (location: string) => {
+    setFavorites(prev => {
+      const next = prev.includes(location)
+        ? prev.filter(f => f !== location)
+        : [...prev, location];
+      localStorage.setItem("favorite_borders", JSON.stringify(next));
+      return next;
+    });
+  };
 
   const fetchTraffic = async () => {
     setLoading(true);
@@ -87,11 +108,23 @@ export default function Home() {
             status={trafficData?.[key]?.status || "smooth"}
             lastUpdated={trafficData?.[key]?.lastUpdated || "Checking..."}
             loading={loading && !trafficData}
+            isFavorite={favorites.includes(key)}
+            onFavoriteToggle={handleFavoriteToggle}
           />
         ))}
       </div>
     </div>
   );
+
+  // All border keys for favorites lookup
+  const ALL_BORDER_KEYS = [
+    "Brunei ➔ Miri", "Miri ➔ Brunei",
+    "Brunei ➔ Tedungan", "Tedungan ➔ Brunei",
+    "Brunei ➔ Pandaruan", "Pandaruan ➔ Brunei",
+    "Brunei ➔ Lawas", "Lawas ➔ Brunei",
+  ];
+
+  const favoritedKeys = ALL_BORDER_KEYS.filter(k => favorites.includes(k));
 
   return (
     <>
@@ -156,6 +189,9 @@ export default function Home() {
               {/* Nearest Border */}
               <NearestBorder />
 
+              {/* Crossing Timer */}
+              <CrossingTimer />
+
               {/* Currency Widget */}
               <CurrencyWidget from="BND" to="MYR" />
 
@@ -176,6 +212,33 @@ export default function Home() {
                   </button>
                 ))}
               </div>
+
+              {/* ⭐ Favorites Section */}
+              {favoritedKeys.length > 0 && activeBorder === "All" && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 px-1">
+                    <Star size={14} weight="fill" style={{ color: "#ff824c" }} />
+                    <p className="text-xs font-bold uppercase tracking-wider"
+                      style={{ color: "#ff824c" }}>
+                      Your Favorites
+                    </p>
+                  </div>
+                  <div className="grid gap-3">
+                    {favoritedKeys.map((key) => (
+                      <BorderCard
+                        key={`fav-${key}`}
+                        location={key}
+                        queueTime={trafficData?.[key]?.time || "---"}
+                        status={trafficData?.[key]?.status || "smooth"}
+                        lastUpdated={trafficData?.[key]?.lastUpdated || "Checking..."}
+                        loading={loading && !trafficData}
+                        isFavorite={true}
+                        onFavoriteToggle={handleFavoriteToggle}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Border Cards */}
               <div className="space-y-6">
