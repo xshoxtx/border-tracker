@@ -1,6 +1,6 @@
 {
-    "name": "Pathfinder Border Intelligence",
-    "short_name": "Pathfinder",
+    "name": "BorderIQ — Smart Border Intelligence",
+    "short_name": "BorderIQ",
     "description": "Real-time border queue monitoring for Malaysia & Brunei crossings.",
     "start_url": "/",
     "id": "/",

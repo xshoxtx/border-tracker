@@ -5,21 +5,41 @@ import { motion } from "framer-motion";
 import { Sun, Moon } from "@phosphor-icons/react";
 
 export const ThemeToggle = () => {
-    const [theme, setTheme] = useState<"light" | "dark">("dark");
+    // Read from DOM directly — blocking script already set data-theme before hydration
+    // This prevents a flash where state defaults to "dark" before useEffect runs
+    const [theme, setTheme] = useState<"light" | "dark">(() => {
+        if (typeof document !== "undefined") {
+            const t = document.documentElement.getAttribute("data-theme");
+            if (t === "light" || t === "dark") return t;
+        }
+        return "dark";
+    });
 
     useEffect(() => {
-        const saved = localStorage.getItem("theme") as "light" | "dark";
-        if (saved) {
-            setTheme(saved);
-            document.documentElement.className = saved;
+        // Sync with DOM on mount (covers edge cases where lazy hydration differs)
+        const domTheme = document.documentElement.getAttribute("data-theme") as "light" | "dark";
+        if (domTheme && domTheme !== theme) {
+            setTheme(domTheme);
         }
+
+        // Listen for storage changes from other tabs
+        const onStorage = (e: StorageEvent) => {
+            if (e.key === "theme" && (e.newValue === "light" || e.newValue === "dark")) {
+                setTheme(e.newValue);
+                document.documentElement.setAttribute("data-theme", e.newValue);
+            }
+        };
+        window.addEventListener("storage", onStorage);
+        return () => window.removeEventListener("storage", onStorage);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const toggle = () => {
         const newTheme = theme === "light" ? "dark" : "light";
         setTheme(newTheme);
         localStorage.setItem("theme", newTheme);
-        document.documentElement.className = newTheme;
+        // Use setAttribute — does NOT touch font variable classNames on <html>
+        document.documentElement.setAttribute("data-theme", newTheme);
     };
 
     return (

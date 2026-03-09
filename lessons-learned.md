@@ -1,4 +1,4 @@
-# lessons-learned.md - Border Tracker
+# lessons-learned.md - BorderIQ (formerly Border Tracker)
 
 ## 📚 Session Lessons
 
@@ -125,3 +125,63 @@
 - **Problem**: `gh auth` token expired, causing `git push` to fail with "Invalid username or token."
 - **Fix**: Generated new Personal Access Token (PAT) and re-authenticated via `gh auth login --with-token`.
 - **Lesson**: PAT tokens have expiry dates. Check `gh auth status` first before attempting push. Current token expires Apr 1, 2026.
+
+---
+
+### [2026-03-08] iOS PWA Theme Persistence — 3-Layer Bug Fixed
+- **Problem**: Set light mode → close PWA → reopen → shows dark. Click Settings → go back Home → shows light.
+- **Root causes (3 bugs)**:
+  1. `ThemeToggle` used `document.documentElement.className = saved` — **overwrote** the Next.js font variable class (`__variable-abc123`), corrupting hydration
+  2. Blocking script regex produced `" light"` (leading space) when `dark` wasn't in the existing class string
+  3. `ThemeToggle` only mounted when Settings tab opened → DOM correction only happened after user visited Settings
+- **Fix**: Switched theme system from CSS class to `data-theme` HTML attribute:
+  - `layout.tsx` blocking script → `setAttribute('data-theme', t)` instead of className regex
+  - `ThemeToggle` → reads `document.documentElement.getAttribute('data-theme')` on init (already set by blocking script), uses `setAttribute` on toggle
+  - `globals.css` → all `.dark { }` → `[data-theme="dark"] { }`
+- **Lesson**: For iOS PWA theme persistence, **never use `className =`** — it overwrites other classes. Use `dataset` or `setAttribute`. The theme toggle component should read from the DOM (set by blocking script), not default to `"dark"` — this is the class of bug that only manifests on iOS PWA where React hydration conflicts with bfcache page restoration.
+
+---
+
+### [2026-03-08] API Security — Broadcast Endpoints Must Always Be Auth-Protected
+- **Problem**: `/api/notifications/broadcast` and `/api/telegram/broadcast` had no authentication. Anyone who discovered the endpoint could spam Firebase push notifications to ALL users or post fake messages to the Telegram channel.
+- **Fix**: Added `Authorization: Bearer <INTERNAL_API_SECRET>` check using `checkInternalAuth()`. Secret stored in `.env` as `INTERNAL_API_SECRET`.
+- **Lesson**: **Any endpoint that sends mass communications (push, email, Telegram, SMS) must ALWAYS be protected by a secret.** Even if the endpoint is "private", assumption of internal-only access is not security. Treat all HTTP endpoints as publicly reachable.
+
+---
+
+### [2026-03-08] Rate Limiting by Nickname is Insufficient — Always Use IP
+- **Problem**: `/api/snaps` and `/api/incidents` rate limited by `nickname` only. Attacker can bypass by simply changing their nickname on each request — no server-side verification of identity.
+- **Fix**: Added dual layer — IP-based rate limit (primary) + nickname (secondary). IP extracted from `cf-connecting-ip` / `x-real-ip` / `x-forwarded-for` headers to work behind proxies.
+- **Lesson**: **Nickname/username-based rate limits are easily bypassed.** The only reliable server-side identity signal without auth is IP. Combine IP rate limiting with any existing user-identity checks for belt-and-suspenders protection.
+
+---
+
+### [2026-03-08] Next.js Script Component for Third-Party Analytics
+- **Best practice**: Use `<Script strategy="afterInteractive">` from `next/script` for analytics (GA4, Hotjar, etc.) — not raw `<script>` in `_document` or `layout.tsx` `<head>`. `afterInteractive` loads the script after hydration, preserving Core Web Vitals (LCP, FID, CLS) scores.
+- **CSP requirement**: When adding any external script, its domain(s) must be whitelisteed in `script-src`, `connect-src`, and (if it loads images) `img-src` in your Content-Security-Policy headers.
+- **GA4 domains needed**: `googletagmanager.com` (script), `google-analytics.com` + `analytics.google.com` + `region1.google-analytics.com` (data collection endpoints).
+
+---
+
+### [2026-03-09] iOS PWA bfcache Restoration — Blocking Scripts Don't Re-Run
+- **Problem**: Fixed the theme system to use `data-theme` attribute (v3.4.1), but light mode STILL reverted to dark on iOS PWA close/reopen.
+- **Root cause**: iOS restores PWA from **bfcache** (frozen DOM snapshot) — the blocking `<script>` in `<head>` does **NOT re-execute** on bfcache restore. The `<html>` tag reverts to SSR default `data-theme="dark"`.
+- **Fix**: Added `pageshow` (with `event.persisted` check) and `visibilitychange` event listeners inside the blocking script. These fire on bfcache restore and app switch, re-applying the saved theme.
+- **Lesson**: **Blocking scripts only run once on initial page load.** For iOS PWA, always add `pageshow` + `visibilitychange` listeners if state must persist across app close/reopen cycles. The blocking script pattern alone is insufficient.
+
+---
+
+### [2026-03-09] TomTom Flow API — Zoom Level Determines Segment Granularity
+- **Problem**: Both directions of a border crossing showed identical queue times (e.g., Brunei→Miri = Miri→Brunei = 26 min).
+- **Root cause**: Coordinates were ~200m apart and zoom was set to 10. At zoom 10, road segments span 5-10km — both coordinates snapped to the **exact same segment**, returning identical data.
+- **Fix**: Increased zoom from 10 to 15 (segments ~200-500m). Spread directional coordinates 1-2km apart on each country's approach road so they land on genuinely different road segments.
+- **Lesson**: **TomTom Flow Segment API zoom level directly controls segment size.** For directional traffic data, use zoom ≥14 and place coordinates on separate approach roads, not at the same junction.
+
+---
+
+### [2026-03-09] Leaflet + Next.js — SSR Kills, Dynamic Import Saves
+- **Problem**: Adding `import QueueMap from "@/components/QueueMap"` directly in `page.tsx` caused build failure — Leaflet accesses `window` and `document` which don't exist during SSR.
+- **Fix**: Use `next/dynamic` with `ssr: false`: `const QueueMap = dynamic(() => import("@/components/QueueMap"), { ssr: false })`. This ensures Leaflet only loads client-side.
+- **React-leaflet gotcha**: `MapContainer` is immutable after creation — can't change `center`, `zoom`, or tile URLs dynamically. To swap tile layers (e.g., dark↔light), use a `key` prop so React unmounts and remounts the `TileLayer` component.
+- **CARTO base map URLs**: Dark = `dark_all`, Light = `light_all`. The `voyager` style needs `rastertiles/voyager` prefix — using just `voyager` returns blank tiles.
+

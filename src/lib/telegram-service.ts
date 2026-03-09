@@ -1,5 +1,5 @@
 /**
- * Telegram Bot Service — Pathfinder Border Intelligence
+ * Telegram Bot Service — BorderIQ
  *
  * Sends border jam alerts to @borderbrunei channel via Telegram Bot API.
  * Bot: @Intelligentborderbot
@@ -64,7 +64,7 @@ function formatAlertMessage(
 
     msg += `\n🕐 Updated: ${now} (Brunei/Miri time)`;
     msg += `\n\n💡 _Tip: Cross early morning (6-8 AM) for shortest queues_`;
-    msg += `\n\n🌐 [Open Pathfinder App](https://border.creativepresslab.com)`;
+    msg += `\n\n🌐 [Open BorderIQ App](https://border.creativepresslab.com)`;
 
     return msg;
 }
@@ -87,7 +87,7 @@ function formatSummaryMessage(
         msg += `${emoji} *${b.label}*: ~${b.queueMinutes} min\n`;
     });
 
-    msg += `\n🌐 [Live updates → Pathfinder](https://border.creativepresslab.com)`;
+    msg += `\n🌐 [Live updates → BorderIQ](https://border.creativepresslab.com)`;
 
     return msg;
 }

@@ -14,30 +14,36 @@ import { sendTelegramJamAlert } from "@/lib/telegram-service";
 
 const TOMTOM_KEY = process.env.TOMTOM_API_KEY;
 const BASE_URL = "https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json";
-const ZOOM = 10;
+const ZOOM = 15; // Higher zoom = finer segment granularity = better directional accuracy
 
 /**
- * Border crossing road coordinates (lat, lon)
- * Each border crossing has TWO directional points:
- *   - [0]: outbound (Brunei side approach)
- *   - [1]: inbound (Malaysia side approach)
+ * Border crossing approach road coordinates (lat, lon)
+ * Each border crossing has TWO directional points spread 1-2km apart:
+ *   - [0]: outbound (Brunei side approach road, ~1km INSIDE Brunei heading to border)
+ *   - [1]: inbound (Malaysia side approach road, ~1-2km INSIDE Malaysia heading to border)
+ *
+ * IMPORTANT: Points must be far enough apart to land on different TomTom road segments.
+ * At zoom=15, segments are ~200-500m, so 1km+ spread ensures separate segment data.
+ * Previous coords were only ~200m apart at zoom=10 (5+km segments) → identical readings.
  */
 const BORDER_POINTS: Record<string, { label: string; coords: [number, number] }[]> = {
     "Sungai Tujuh": [
-        { label: "Brunei ➔ Miri", coords: [4.5878, 114.0753] },
-        { label: "Miri ➔ Brunei", coords: [4.5892, 114.0731] },
+        // Brunei→Miri: on the Brunei approach road ~1.2km east of checkpoint (heading west to border)
+        { label: "Brunei ➔ Miri", coords: [4.5835, 114.0900] },
+        // Miri→Brunei: on the Malaysia approach road heading east to border
+        { label: "Miri ➔ Brunei", coords: [4.58207, 114.07357] },
     ],
     "Kuala Lurah": [
-        { label: "Brunei ➔ Tedungan", coords: [4.7407, 114.8135] },
-        { label: "Tedungan ➔ Brunei", coords: [4.7415, 114.8120] },
+        { label: "Brunei ➔ Kuala Lurah", coords: [4.74170, 114.81374] },
+        { label: "Kuala Lurah ➔ Brunei", coords: [4.73604, 114.81055] },
     ],
     "Ujung Jalan": [
-        { label: "Brunei ➔ Pandaruan", coords: [4.6890, 115.0393] },
-        { label: "Pandaruan ➔ Brunei", coords: [4.6895, 115.0380] },
+        { label: "Brunei ➔ Pandaruan", coords: [4.68963, 115.04002] },
+        { label: "Pandaruan ➔ Brunei", coords: [4.69148, 115.02902] },
     ],
     "Mengkalap": [
-        { label: "Brunei ➔ Lawas", coords: [4.7933, 115.2363] },
-        { label: "Lawas ➔ Brunei", coords: [4.7940, 115.2350] },
+        { label: "Brunei ➔ Lawas", coords: [4.79308, 115.23583] },
+        { label: "Lawas ➔ Brunei", coords: [4.78832, 115.23891] },
     ],
 };
 

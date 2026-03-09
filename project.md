@@ -1,5 +1,5 @@
-# project.md — Pathfinder Border Intelligence
-**Last Updated**: 2026-03-03 | **Version**: v3.4.0 | **ALESA**: v14.3.0 Sentinel Mode
+# project.md — BorderIQ (formerly Pathfinder Border Intelligence)
+**Last Updated**: 2026-03-09 | **Version**: v3.5.0 | **ALESA**: v14.3.0 Sentinel Mode
 
 ---
 
@@ -12,6 +12,8 @@
 | **Stack** | Next.js 16, React 19, Tailwind v4, Prisma/MySQL, Firebase FCM |
 | **Design** | Airbnb Cereal font, Phosphor Icons, #337cfd / #ff824c / #060d1a |
 | **Data Source** | TomTom Traffic Flow API (key in `.env` → `TOMTOM_API_KEY`) |
+| **Analytics** | Google Analytics 4 → `G-53KPQLQ6E9` (via `next/script` afterInteractive) |
+| **Security** | `INTERNAL_API_SECRET` in `.env` — required for broadcast endpoints |
 
 ---
 
@@ -96,14 +98,21 @@
 
 ---
 
-## ✅ Phase 9: Analytics & Polish (IN PROGRESS 2026-03-03)
+## ✅ Phase 9: Analytics & Polish (IN PROGRESS 2026-03-08)
 | # | Feature | Status |
 |---|---|---|
 | 1 | **⭐ User Favorites** | ✅ Star icon on BorderCard, favorites-first rendering, localStorage |
 | 2 | **⏱️ Crossing Timer** | ✅ Stopwatch with border picker, localStorage persistence, save to API |
-| 3 | **📊 Weekly Jam Report** | ⬜ Planned |
-| 4 | **🗺️ Live Traffic Map** | ⬜ Planned |
-| 5 | **🌐 Multi-language** | ⬜ Planned |
+| 3 | **📊 Google Analytics 4** | ✅ GA4 `G-53KPQLQ6E9` via `next/script` afterInteractive, CSP updated |
+| 4 | **⭐ BorderCard Star Fix** | ✅ Star moved to right column — stacked with Share + Navigate buttons |
+| 5 | **🔐 Security Hardening** | ✅ Full audit, 7 endpoints patched, shared `rateLimit.ts` lib created |
+| 6 | **📅 Holiday Date Fix** | ✅ 11 dates corrected, 3 holidays added, sources cited |
+| 7 | **📍 TomTom Coordinate Fix** | ✅ Zoom 10→15, coordinates verified on Google Maps, directional data working |
+| 8 | **🏷️ Tedungan → Kuala Lurah** | ✅ Renamed across 9 files |
+| 9 | **🗺️ Live Traffic Map** | ✅ TomTom Flow tile overlay, toggle, legend, theme-aware (dark/light) |
+| 10 | **🧠 Rebrand → BorderIQ** | ✅ Renamed across 9 files, zero Pathfinder refs remaining |
+| 11 | **📊 Weekly Jam Report** | ⬜ Planned |
+| 12 | **🌐 Multi-language** | ⬜ Planned |
 
 ---
 
@@ -145,9 +154,14 @@ public/
 
 src/app/api/
   weather/             — Border weather (Open-Meteo)
-  smart-alert/         — FCM push when queue clear
-  cron/collect/        — Hourly TomTom data collector
+  smart-alert/         — FCM push when queue clear [🔐 CRON_SECRET]
+  cron/collect/        — Hourly TomTom data collector [🔐 CRON_SECRET]
   heatmap/             — 7×24 grid aggregation
+  notifications/broadcast/ — FCM mass push [🔐 INTERNAL_API_SECRET required]
+  telegram/broadcast/  — Telegram channel post [🔐 INTERNAL_API_SECRET required]
+
+src/lib/
+  rateLimit.ts         — [NEW] Shared IP rate limiter, sanitize, auth helpers
 ```
 
 ---
@@ -156,4 +170,6 @@ src/app/api/
 - **Data refresh**: Auto every 5 min via `setInterval` in `page.tsx`
 - **Congestion model**: `jamFactor = 1 - (currentSpeed/freeFlowSpeed)` → estimate queue minutes
 - **Threshold alert**: `sendThresholdAlert()` fires FCM push if queue > 45 min
+- **Theme system**: `data-theme` attribute on `<html>` (not CSS class) — immune to Next.js hydration conflicts
+- **Security model**: Broadcast endpoints require `Authorization: Bearer <INTERNAL_API_SECRET>`; write endpoints IP-rate-limited via `src/lib/rateLimit.ts`; text inputs sanitized (HTML stripped, length capped)
 - **Free tier**: TomTom 2,500 req/day; 8 req/refresh × 288 refreshes/day = 2,304 req ✅

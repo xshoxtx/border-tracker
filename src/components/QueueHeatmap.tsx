@@ -8,8 +8,8 @@ const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const BORDERS = [
     "Brunei ➔ Miri",
     "Miri ➔ Brunei",
-    "Brunei ➔ Tedungan",
-    "Tedungan ➔ Brunei",
+    "Brunei ➔ Kuala Lurah",
+    "Kuala Lurah ➔ Brunei",
     "Brunei ➔ Pandaruan",
     "Pandaruan ➔ Brunei",
     "Brunei ➔ Lawas",

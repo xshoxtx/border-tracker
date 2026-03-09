@@ -21,8 +21,8 @@ const BORDER_POINTS: Record<string, { label: string; coords: [number, number] }[
         { label: "Miri ➔ Brunei", coords: [4.5892, 114.0731] },
     ],
     "Kuala Lurah": [
-        { label: "Brunei ➔ Tedungan", coords: [4.7407, 114.8135] },
-        { label: "Tedungan ➔ Brunei", coords: [4.7415, 114.8120] },
+        { label: "Brunei ➔ Kuala Lurah", coords: [4.74170, 114.81374] },
+        { label: "Kuala Lurah ➔ Brunei", coords: [4.73604, 114.81055] },
     ],
     "Ujung Jalan": [
         { label: "Brunei ➔ Pandaruan", coords: [4.6890, 115.0393] },

@@ -8,8 +8,8 @@ import { ShareCard } from "@/components/ShareCard";
 const NAV_COORDS: Record<string, { lat: number; lng: number }> = {
     "Brunei ➔ Miri": { lat: 4.5852, lng: 114.0723 },
     "Miri ➔ Brunei": { lat: 4.5852, lng: 114.0723 },
-    "Brunei ➔ Tedungan": { lat: 4.7407, lng: 114.8135 },
-    "Tedungan ➔ Brunei": { lat: 4.7407, lng: 114.8135 },
+    "Brunei ➔ Kuala Lurah": { lat: 4.74170, lng: 114.81374 },
+    "Kuala Lurah ➔ Brunei": { lat: 4.73604, lng: 114.81055 },
     "Brunei ➔ Pandaruan": { lat: 4.6890, lng: 115.0393 },
     "Pandaruan ➔ Brunei": { lat: 4.6890, lng: 115.0393 },
     "Brunei ➔ Lawas": { lat: 4.7933, lng: 115.2363 },
@@ -65,26 +65,12 @@ export const BorderCard = ({ location, queueTime, status, lastUpdated, loading, 
             transition={{ duration: 0.25 }}
             className={`status-card ${status}`}
         >
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
-                    {/* Location name + favorite star */}
+                    {/* Location name */}
                     <div className="flex items-center gap-2 mb-2">
                         <Car size={16} weight="fill" style={{ color: statusColors[status] }} />
-                        <span className="text-sm font-bold flex-1">{location}</span>
-                        {onFavoriteToggle && (
-                            <motion.button
-                                whileTap={{ scale: 1.3 }}
-                                onClick={(e) => { e.stopPropagation(); onFavoriteToggle(location); }}
-                                className="haptic-btn p-1 -mr-1"
-                                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-                            >
-                                <Star
-                                    size={18}
-                                    weight={isFavorite ? "fill" : "regular"}
-                                    style={{ color: isFavorite ? "#ff824c" : "var(--muted-foreground)", transition: "color 0.2s" }}
-                                />
-                            </motion.button>
-                        )}
+                        <span className="text-sm font-bold">{location}</span>
                     </div>
 
                     {/* Queue time — BIG */}
@@ -105,7 +91,23 @@ export const BorderCard = ({ location, queueTime, status, lastUpdated, loading, 
                     </div>
                 </div>
 
+                {/* Right column: Star + Share + Navigate — all stacked */}
                 <div className="flex flex-col items-center gap-2">
+                    {onFavoriteToggle && (
+                        <motion.button
+                            whileTap={{ scale: 1.3 }}
+                            onClick={(e) => { e.stopPropagation(); onFavoriteToggle(location); }}
+                            className="haptic-btn h-8 w-8 rounded-xl flex items-center justify-center"
+                            style={{ background: isFavorite ? "rgba(255,130,76,0.12)" : "var(--muted)" }}
+                            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                        >
+                            <Star
+                                size={16}
+                                weight={isFavorite ? "fill" : "regular"}
+                                style={{ color: isFavorite ? "#ff824c" : "var(--muted-foreground)", transition: "color 0.2s" }}
+                            />
+                        </motion.button>
+                    )}
                     <ShareCard border={location} queueTime={queueTime} status={status} />
                     {navUrl && (
                         <a
@@ -121,6 +123,7 @@ export const BorderCard = ({ location, queueTime, status, lastUpdated, loading, 
                     )}
                 </div>
             </div>
+
         </motion.div>
     );
 };

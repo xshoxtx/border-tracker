@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import "./globals.css";
 import { NotificationRegister } from "@/components/NotificationRegister";
+
+const GA_ID = "G-53KPQLQ6E9";
 
 const airbnbCereal = localFont({
   src: [
@@ -18,13 +21,13 @@ const airbnbCereal = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Pathfinder | Border Intelligence",
+  title: "BorderIQ | Smart Border Intelligence",
   description: "Real-time Malaysia–Brunei border queue monitoring — your smarter crossing companion.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Pathfinder",
+    title: "BorderIQ",
     startupImage: "/apple-touch-icon.png",
   },
   other: {
@@ -32,7 +35,7 @@ export const metadata: Metadata = {
     "mobile-web-app-capable": "yes",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
-    "apple-mobile-web-app-title": "Pathfinder",
+    "apple-mobile-web-app-title": "BorderIQ",
     // Prevent phone number detection
     "format-detection": "telephone=no",
   },
@@ -56,14 +59,27 @@ export const viewport: Viewport = {
 };
 
 // Blocking script to apply saved theme BEFORE React hydrates (prevents flash)
+// Uses data-theme attribute — immune to React className hydration conflicts on iOS PWA
 const themeScript = `
 (function(){
-  try {
-    var t = localStorage.getItem('theme');
-    if (t === 'light' || t === 'dark') {
-      document.documentElement.className = document.documentElement.className.replace(/\\b(dark|light)\\b/g, '') + ' ' + t;
-    }
-  } catch(e){}
+  function applyTheme() {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') {
+        document.documentElement.setAttribute('data-theme', t);
+      }
+    } catch(e){}
+  }
+  // Apply immediately on first load
+  applyTheme();
+  // Re-apply on bfcache restore (iOS PWA reopen from frozen snapshot)
+  window.addEventListener('pageshow', function(e) {
+    if (e.persisted) applyTheme();
+  });
+  // Re-apply on visibility change (iOS PWA app switch / tab return)
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) applyTheme();
+  });
 })();
 `;
 
@@ -73,10 +89,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`dark ${airbnbCereal.variable}`} suppressHydrationWarning>
+    <html lang="en" data-theme="dark" className={airbnbCereal.variable} suppressHydrationWarning>
       <head>
+        {/* Theme: blocking script — must run BEFORE React hydration */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
+      {/* GA4 — afterInteractive: loads after page is interactive, doesn't block render */}
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="ga4-init" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_ID}', {
+            page_path: window.location.pathname,
+          });
+        `}
+      </Script>
       <body
         className="antialiased min-h-dvh bg-background text-foreground"
         style={{ fontFamily: "var(--font-cereal), system-ui, -apple-system, sans-serif" }}

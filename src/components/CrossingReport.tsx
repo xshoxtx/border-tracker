@@ -13,8 +13,8 @@ import {
 const CROSSING_BORDERS = [
     "Sungai Tujuh (Brunei → Miri)",
     "Sungai Tujuh (Miri → Brunei)",
-    "Kuala Lurah (Brunei → Tedungan)",
-    "Kuala Lurah (Tedungan → Brunei)",
+    "Kuala Lurah (Brunei → Kuala Lurah)",
+    "Kuala Lurah (Kuala Lurah → Brunei)",
     "Ujung Jalan (Brunei → Pandaruan)",
     "Ujung Jalan (Pandaruan → Brunei)",
     "Mengkalap (Brunei → Lawas)",

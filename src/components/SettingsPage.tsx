@@ -118,7 +118,7 @@ export const SettingsPage = () => {
     const handleShareApp = async () => {
         if (navigator.share) {
             await navigator.share({
-                title: "Pathfinder — Border Intelligence",
+                title: "BorderIQ — Smart Border Intelligence",
                 text: "Check real-time Brunei-Malaysia border queue times!",
                 url: window.location.origin,
             });
@@ -436,7 +436,7 @@ export const SettingsPage = () => {
                     <div className="flex items-center gap-3">
                         <Info size={20} weight="fill" style={{ color: "var(--primary)" }} />
                         <div className="text-left">
-                            <p className="text-sm font-semibold">About Pathfinder</p>
+                            <p className="text-sm font-semibold">About BorderIQ</p>
                             <p className="text-[11px]" style={{ color: "var(--muted-foreground)" }}>
                                 v3.0.0 — Clean Minimal Edition
                             </p>
@@ -453,7 +453,7 @@ export const SettingsPage = () => {
                         style={{ color: "var(--muted-foreground)", borderTop: "1px solid var(--border)", background: "var(--muted)" }}
                     >
                         <p className="text-xs">
-                            <strong>Pathfinder</strong> is a free, open-source border
+                            <strong>BorderIQ</strong> is a free, open-source border
                             intelligence tool for Brunei-Malaysia crossings. Built with ❤️ by{" "}
                             <a href="https://creativepresslab.com" target="_blank" rel="noopener"
                                 className="font-bold" style={{ color: "var(--primary)" }}>
@@ -471,7 +471,7 @@ export const SettingsPage = () => {
                         <div className="flex items-center gap-3">
                             <ShareNetwork size={20} weight="fill" style={{ color: "var(--secondary)" }} />
                             <div className="text-left">
-                                <p className="text-sm font-semibold">Share Pathfinder</p>
+                                <p className="text-sm font-semibold">Share BorderIQ</p>
                                 <p className="text-[11px]" style={{ color: "var(--muted-foreground)" }}>
                                     Help others discover this app
                                 </p>
@@ -500,7 +500,7 @@ export const SettingsPage = () => {
 
             {/* Footer */}
             <p className="text-center text-[10px] pb-4" style={{ color: "var(--muted-foreground)" }}>
-                © 2026 CreativePressLab · Pathfinder v3.0.0
+                © 2026 CreativePressLab · BorderIQ v3.5.0
             </p>
         </motion.div>
     );

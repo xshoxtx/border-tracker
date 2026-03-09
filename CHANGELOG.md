@@ -1,6 +1,91 @@
-# CHANGELOG — Pathfinder Border Intelligence
+# CHANGELOG — BorderIQ (formerly Pathfinder Border Intelligence)
 
 All notable changes to this project will be documented in this file.
+
+---
+
+## [v3.5.0] — 2026-03-09
+
+### Added
+- **🗺️ Live Traffic Map** — New Map tab in bottom navigation with TomTom Traffic Flow tile overlay. Roads colour-coded green/yellow/red based on real-time congestion relative to free-flow speed
+- **Traffic ON/OFF toggle** — Gradient button to show/hide traffic layer
+- **Colour legend** — Bottom-left overlay showing green = free flow, yellow = moderate, red = congested
+- **Theme-aware map tiles** — Dark mode uses CARTO Dark All, light mode uses CARTO Light All. Auto-switches via MutationObserver on `data-theme` attribute
+
+### Changed
+- **🧠 Rebrand → BorderIQ** — Renamed from "Pathfinder Border Intelligence" to "BorderIQ — Smart Border Intelligence" across 9 files (manifest, layout, page, settings, share card, telegram, PWA prompt, CSS). Zero Pathfinder references remaining
+
+### Fixed
+- **🌓 iOS PWA Theme Persistence (Round 2)** — Added `pageshow` + `visibilitychange` listeners to blocking script for bfcache restore
+- **📅 Public Holiday Dates** — 11 dates corrected, 3 added (Thaipusam, Start of Ramadan, Wesak Day), Aug 31 label fixed to "Merdeka Day"
+- **📍 TomTom Directional Coordinates** — Zoom 10→15, coordinates spread 1-2km apart, all verified on Google Maps
+- **🏷️ Tedungan → Kuala Lurah** — Renamed across 9 files
+- **Light mode map tiles** — Fixed CARTO Voyager URL to `light_all`
+
+#### Modified
+- `src/components/QueueMap.tsx` — Complete rewrite: traffic tiles, toggle, legend, theme-aware base map
+- `src/app/page.tsx` — Re-added Map tab (TabId, navItem, dynamic import with `ssr: false`)
+- `.env` — Added `NEXT_PUBLIC_TOMTOM_API_KEY`
+- `src/app/layout.tsx` — `pageshow` + `visibilitychange` listeners
+- `src/app/api/border/route.ts` — Zoom 15, user-verified coordinates, Kuala Lurah labels
+- `src/app/api/smart-alert/route.ts` — Kuala Lurah coordinates + labels
+- `src/app/api/cron/collect/route.ts` — Kuala Lurah coordinates + labels
+- `src/app/api/crossing/route.ts` — Kuala Lurah in whitelist
+- `src/components/QueueHeatmap.tsx`, `QueueMap.tsx`, `CrossingReport.tsx`, `BorderCard.tsx` — Kuala Lurah labels
+- `src/components/HolidayAlert.tsx` — Corrected 2026 holiday dates
+
+---
+
+## [v3.4.2] — 2026-03-08
+
+### Added
+- **📊 Google Analytics 4** — GA4 property `G-53KPQLQ6E9` integrated via `next/script` with `strategy="afterInteractive"` (does not block page render / Core Web Vitals)
+  - CSP updated in `next.config.ts` to whitelist `googletagmanager.com`, `google-analytics.com`, `analytics.google.com`, `region1.google-analytics.com`
+
+### Fixed
+- **⭐ BorderCard Star Alignment** — Moved favorite star button from left column header row into right column (stacked with Share + Navigate icons). Fixes visual disconnect caused by `flex-1` pushing star to misaligned position
+
+### Security
+- **🔐 API Security Hardening** — Full security audit performed on all 14 API endpoints. Critical vulnerabilities patched:
+  - `/api/notifications/broadcast` + `/api/telegram/broadcast` — Now require `Authorization: Bearer <INTERNAL_API_SECRET>` (previously fully open — anyone could spam FCM push or Telegram channel)
+  - `/api/chat` — IP rate limit: 5 messages/minute + HTML sanitization + 500 char limit
+  - `/api/crossing` — IP rate limit: 3 submissions/10min + border name whitelist + 300 char note max
+  - `/api/snaps` — Dual rate limit: IP-based (1/15min) + existing nickname-based layer
+  - `/api/snaps/flag` — Per-snapId per-IP rate limit (prevents single user mass-hiding content) + global 10 flags/hour cap
+  - `/api/incidents` — IP + nickname dual rate limit; PATCH dismiss also rate limited (5/hour)
+- **🛡️ New shared lib** — `src/lib/rateLimit.ts`: in-memory rate limiter with `checkRateLimit()`, `getClientIp()` (Cloudflare/Nginx/proxy aware), `sanitize()`, `checkInternalAuth()`
+
+#### Modified
+- `src/app/layout.tsx` — Added GA4 Script tags
+- `next.config.ts` — CSP updated for GA4 domains
+- `src/components/BorderCard.tsx` — Star button moved to right column
+- `src/app/api/notifications/broadcast/route.ts` — Auth added
+- `src/app/api/telegram/broadcast/route.ts` — Auth added
+- `src/app/api/chat/route.ts` — Rate limit + sanitize
+- `src/app/api/crossing/route.ts` — Rate limit + whitelist + sanitize
+- `src/app/api/snaps/route.ts` — IP rate limit added
+- `src/app/api/snaps/flag/route.ts` — Per-snap + global rate limit
+- `src/app/api/incidents/route.ts` — IP + nickname rate limit; PATCH rate limited
+- `src/lib/rateLimit.ts` — **[NEW]** Shared security utilities
+
+---
+
+## [v3.4.1] — 2026-03-08
+
+
+### Fixed
+- **🌓 iOS PWA Theme Persistence** — Light mode now correctly persists after PWA close/reopen on iOS
+  - Root cause: 3-layer bug (className overwrite, regex edge case, ThemeToggle only mounting on Settings tab open)
+  - Solution: Switched theme system from CSS class (`.dark`) to `data-theme` attribute (`[data-theme="dark"]`)
+  - Blocking script now uses `setAttribute('data-theme', t)` — immune to React hydration className conflicts
+  - `ThemeToggle` now reads theme from DOM on init (already set by blocking script) instead of defaulting to `"dark"`
+  - `ThemeToggle` uses `setAttribute` instead of `className =` — no longer overwrites font variable class
+  - Added `storage` event listener in `ThemeToggle` for cross-tab theme sync
+
+#### Modified
+- `src/app/layout.tsx` — Fixed blocking script + `data-theme="dark"` default on `<html>`
+- `src/components/ThemeToggle.tsx` — DOM-first init, `setAttribute`, storage listener
+- `src/app/globals.css` — All `.dark { }` → `[data-theme="dark"] { }`
 
 ---
 

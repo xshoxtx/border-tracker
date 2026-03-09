@@ -98,7 +98,7 @@ export const PWAAwareness = () => {
                             <DownloadSimple size={22} weight="bold" color="var(--primary)" />
                         </div>
                         <div>
-                            <p className="text-sm font-black leading-tight">Install Pathfinder</p>
+                            <p className="text-sm font-black leading-tight">Install BorderIQ</p>
                             <p className="text-[10px] mt-0.5" style={{ color: "var(--muted-foreground)" }}>
                                 Add to home screen for instant access
                             </p>

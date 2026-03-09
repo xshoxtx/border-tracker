@@ -5,27 +5,31 @@ import { motion } from "framer-motion";
 import { CalendarCheck, Warning, Confetti, Clock } from "@phosphor-icons/react";
 
 // ─── Brunei & Malaysia Public Holidays 2026 ───
+// Sources: timeanddate.com, officeholidays.com, cutisekolah.com.my, publicholidays.com.my
+// Islamic dates are tentative (based on lunar calendar projections)
 const HOLIDAYS_2026 = [
     { date: "2026-01-01", name: "New Year's Day", country: "both", severity: "moderate" },
-    { date: "2026-01-29", name: "Chinese New Year", country: "both", severity: "high" },
-    { date: "2026-01-30", name: "Chinese New Year (Day 2)", country: "MY", severity: "high" },
+    { date: "2026-01-17", name: "Israk & Mikraj", country: "BN", severity: "low" },
+    { date: "2026-02-01", name: "Thaipusam", country: "MY", severity: "low" },
+    { date: "2026-02-17", name: "Chinese New Year", country: "both", severity: "high" },
+    { date: "2026-02-18", name: "Chinese New Year (Day 2)", country: "MY", severity: "high" },
+    { date: "2026-02-19", name: "Start of Ramadan", country: "BN", severity: "moderate" },
     { date: "2026-02-23", name: "Brunei National Day", country: "BN", severity: "high" },
-    { date: "2026-03-20", name: "Nuzul Al-Quran", country: "both", severity: "moderate" },
-    { date: "2026-03-21", name: "Israk & Mikraj", country: "BN", severity: "low" },
-    { date: "2026-04-02", name: "Good Friday", country: "MY", severity: "low" },
+    { date: "2026-03-07", name: "Nuzul Al-Quran", country: "both", severity: "moderate" },
+    { date: "2026-03-21", name: "Hari Raya Aidilfitri", country: "both", severity: "extreme" },
+    { date: "2026-03-22", name: "Hari Raya Aidilfitri (Day 2)", country: "both", severity: "extreme" },
+    { date: "2026-04-03", name: "Good Friday", country: "MY", severity: "low" },
     { date: "2026-05-01", name: "Labour Day", country: "both", severity: "moderate" },
-    { date: "2026-05-15", name: "Royal Brunei Armed Forces Day", country: "BN", severity: "low" },
-    { date: "2026-05-31", name: "Hari Raya Aidilfitri", country: "both", severity: "extreme" },
-    { date: "2026-06-01", name: "Hari Raya Aidilfitri (Day 2)", country: "both", severity: "extreme" },
-    { date: "2026-06-07", name: "Agong Birthday", country: "MY", severity: "low" },
+    { date: "2026-05-27", name: "Hari Raya Haji", country: "both", severity: "high" },
+    { date: "2026-05-28", name: "Hari Raya Haji (Day 2)", country: "both", severity: "high" },
+    { date: "2026-05-31", name: "Wesak Day", country: "MY", severity: "low" },
+    { date: "2026-06-01", name: "Agong Birthday", country: "MY", severity: "low" },
+    { date: "2026-06-17", name: "Awal Muharram", country: "both", severity: "low" },
     { date: "2026-07-15", name: "Sultan's Birthday", country: "BN", severity: "moderate" },
-    { date: "2026-08-07", name: "Hari Raya Haji", country: "both", severity: "high" },
-    { date: "2026-08-08", name: "Hari Raya Haji (Day 2)", country: "both", severity: "high" },
-    { date: "2026-08-28", name: "Awal Muharram", country: "both", severity: "low" },
-    { date: "2026-08-31", name: "Malaysia Day", country: "MY", severity: "moderate" },
+    { date: "2026-08-25", name: "Mawlid Nabi", country: "both", severity: "low" },
+    { date: "2026-08-31", name: "Merdeka Day", country: "MY", severity: "moderate" },
     { date: "2026-09-16", name: "Malaysia Day", country: "MY", severity: "moderate" },
-    { date: "2026-10-29", name: "Deepavali", country: "MY", severity: "moderate" },
-    { date: "2026-11-06", name: "Mawlid Nabi", country: "both", severity: "low" },
+    { date: "2026-11-08", name: "Deepavali", country: "MY", severity: "moderate" },
     { date: "2026-12-25", name: "Christmas Day", country: "both", severity: "high" },
 ];
 

@@ -63,7 +63,7 @@ export const ShareCard = ({ border, queueTime, status }: ShareCardProps) => {
             ctx.fillStyle = "#ffffff";
             ctx.font = "900 48px system-ui, -apple-system, sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("PATHFINDER", w / 2, 450);
+            ctx.fillText("BORDERIQ", w / 2, 450);
 
             ctx.fillStyle = "#94a3b8";
             ctx.font = "700 20px system-ui, sans-serif";
@@ -139,7 +139,7 @@ export const ShareCard = ({ border, queueTime, status }: ShareCardProps) => {
             // Watermark
             ctx.fillStyle = "rgba(255,255,255,0.15)";
             ctx.font = "700 18px system-ui, sans-serif";
-            ctx.fillText("LIVE FROM PATHFINDER — border.creativepresslab.com", w / 2, h - 100);
+            ctx.fillText("LIVE FROM BORDERIQ — border.creativepresslab.com", w / 2, h - 100);
 
             canvas.toBlob((blob) => resolve(blob), "image/png");
         });
@@ -149,7 +149,7 @@ export const ShareCard = ({ border, queueTime, status }: ShareCardProps) => {
         const blob = await generateImage();
         if (!blob) return;
 
-        const file = new File([blob], `pathfinder-${border.toLowerCase().replace(/\s/g, "-")}.png`, {
+        const file = new File([blob], `borderiq-${border.toLowerCase().replace(/\s/g, "-")}.png`, {
             type: "image/png",
         });
 
@@ -157,7 +157,7 @@ export const ShareCard = ({ border, queueTime, status }: ShareCardProps) => {
         if (navigator.share && navigator.canShare?.({ files: [file] })) {
             try {
                 await navigator.share({
-                    title: `Pathfinder — ${border}`,
+                    title: `BorderIQ — ${border}`,
                     text: `${STATUS_CONFIG[status].emoji} ${border}: ${queueTime} (${STATUS_CONFIG[status].label})`,
                     files: [file],
                 });

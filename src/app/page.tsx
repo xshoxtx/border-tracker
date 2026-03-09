@@ -19,6 +19,8 @@ import { Leaderboard } from "@/components/Leaderboard";
 import { QueueHeatmap } from "@/components/QueueHeatmap";
 import { BorderWeather } from "@/components/BorderWeather";
 import { CrossingTimer } from "@/components/CrossingTimer";
+import dynamic from "next/dynamic";
+const QueueMap = dynamic(() => import("@/components/QueueMap"), { ssr: false });
 import {
   House,
   ChatsCircle,
@@ -31,7 +33,7 @@ import {
   Star,
 } from "@phosphor-icons/react";
 
-type TabId = "home" | "community" | "settings";
+type TabId = "home" | "map" | "community" | "settings";
 type CommunitySubTab = "chat" | "feed" | "board";
 
 const BORDER_LOCATIONS = ["All", "Sungai Tujuh", "Kuala Lurah", "Ujung Jalan", "Mengkalap"];
@@ -83,6 +85,7 @@ export default function Home() {
 
   const navItems: { id: TabId; label: string; icon: React.ElementType }[] = [
     { id: "home", label: "Home", icon: House },
+    { id: "map", label: "Map", icon: MapTrifold },
     { id: "community", label: "Community", icon: ChatsCircle },
     { id: "settings", label: "Settings", icon: GearSix },
   ];
@@ -119,7 +122,7 @@ export default function Home() {
   // All border keys for favorites lookup
   const ALL_BORDER_KEYS = [
     "Brunei ➔ Miri", "Miri ➔ Brunei",
-    "Brunei ➔ Tedungan", "Tedungan ➔ Brunei",
+    "Brunei ➔ Kuala Lurah", "Kuala Lurah ➔ Brunei",
     "Brunei ➔ Pandaruan", "Pandaruan ➔ Brunei",
     "Brunei ➔ Lawas", "Lawas ➔ Brunei",
   ];
@@ -142,7 +145,7 @@ export default function Home() {
             </div>
             <div>
               <span className="text-sm font-extrabold tracking-tight block leading-none">
-                Pathfinder
+                BorderIQ
               </span>
               <span className="text-[9px] font-semibold uppercase tracking-wider"
                 style={{ color: "var(--muted-foreground)" }}>
@@ -245,7 +248,7 @@ export default function Home() {
                 {(activeBorder === "All" || activeBorder === "Sungai Tujuh") &&
                   renderBorderGroup("Sungai Tujuh", ["Brunei ➔ Miri", "Miri ➔ Brunei"])}
                 {(activeBorder === "All" || activeBorder === "Kuala Lurah") &&
-                  renderBorderGroup("Kuala Lurah", ["Brunei ➔ Tedungan", "Tedungan ➔ Brunei"])}
+                  renderBorderGroup("Kuala Lurah", ["Brunei ➔ Kuala Lurah", "Kuala Lurah ➔ Brunei"])}
                 {(activeBorder === "All" || activeBorder === "Ujung Jalan") &&
                   renderBorderGroup("Ujung Jalan", ["Brunei ➔ Pandaruan", "Pandaruan ➔ Brunei"])}
                 {(activeBorder === "All" || activeBorder === "Mengkalap") &&
@@ -260,7 +263,15 @@ export default function Home() {
             </motion.div>
           )}
 
-          {/* MAP TAB — REMOVED */}
+          {/* MAP TAB */}
+          {activeTab === "map" && (
+            <motion.div key="map" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="space-y-4">
+              <h2 className="text-lg font-bold">🗺️ Live Traffic Map</h2>
+              <p className="text-sm text-muted-foreground">Real-time traffic flow near border crossings. Tap markers for queue details.</p>
+              <QueueMap trafficData={trafficData} />
+            </motion.div>
+          )}
 
           {/* COMMUNITY TAB */}
           {activeTab === "community" && (

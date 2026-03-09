@@ -1,22 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { findNearestBorder } from "@/lib/upload";
+import { checkRateLimit, getClientIp, sanitize } from "@/lib/rateLimit";
 
 const RATE_LIMIT_MS = 30 * 60 * 1000; // 30 minutes
-const DISMISS_THRESHOLD = 2; // 2 dismissals = auto-resolve
+const DISMISS_THRESHOLD = 2;
 const VALID_TYPES = ["system_down", "extra_counters", "road_closure", "other"];
 
-/**
- * GET /api/incidents — Fetch active incidents (last 12h, not resolved, limit 10)
- */
 export async function GET() {
     try {
         const since = new Date(Date.now() - 12 * 60 * 60 * 1000);
         const incidents = await prisma.incidentReport.findMany({
-            where: {
-                resolved: false,
-                createdAt: { gte: since },
-            },
+            where: { resolved: false, createdAt: { gte: since } },
             orderBy: { createdAt: "desc" },
             take: 10,
         });
@@ -27,13 +22,27 @@ export async function GET() {
     }
 }
 
-/**
- * POST /api/incidents — Submit an incident report
- * Body: { border: string, type: string, note?: string, nickname?: string }
- */
 export async function POST(req: Request) {
+    // 🔐 IP rate limit: 2 incidents per 30 minutes per IP
+    const ip = getClientIp(req);
+    const ipRl = checkRateLimit(ip, "incidents", 2, RATE_LIMIT_MS);
+    if (!ipRl.allowed) {
+        const waitMins = Math.ceil(ipRl.retryAfterMs / 60_000);
+        return NextResponse.json(
+            { success: false, error: `Please wait ${waitMins} more minutes before reporting again` },
+            { status: 429 }
+        );
+    }
+
     try {
-        const { border, type, note, nickname, lat, lng } = await req.json();
+        const body = await req.json();
+
+        const border = sanitize(body.border, 60);
+        const type = sanitize(body.type, 30);
+        const note = sanitize(body.note, 300);
+        const nickname = sanitize(body.nickname || "Traveler", 30);
+        const lat = body.lat;
+        const lng = body.lng;
 
         if (!border || !type) {
             return NextResponse.json({ success: false, error: "Border and type required" }, { status: 400 });
@@ -42,7 +51,6 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: `Invalid type. Must be: ${VALID_TYPES.join(", ")}` }, { status: 400 });
         }
 
-        // GPS validation — must be within 10km of any border
         if (lat == null || lng == null || isNaN(lat) || isNaN(lng)) {
             return NextResponse.json({ success: false, error: "GPS location required to report incidents" }, { status: 400 });
         }
@@ -54,31 +62,21 @@ export async function POST(req: Request) {
             }, { status: 400 });
         }
 
-        const user = nickname || "Traveler";
-
-        // Rate limit: 1 incident per 30 min per nickname
+        // Nickname-based rate limit (second layer)
         const since = new Date(Date.now() - RATE_LIMIT_MS);
         const recent = await prisma.incidentReport.findFirst({
-            where: {
-                nickname: user,
-                createdAt: { gte: since },
-            },
+            where: { nickname, createdAt: { gte: since } },
         });
         if (recent) {
             const waitMins = Math.ceil((RATE_LIMIT_MS - (Date.now() - recent.createdAt.getTime())) / 60000);
-            return NextResponse.json({
-                success: false,
-                error: `Please wait ${waitMins} more minutes before reporting again`
-            }, { status: 429 });
+            return NextResponse.json(
+                { success: false, error: `Please wait ${waitMins} more minutes before reporting again` },
+                { status: 429 }
+            );
         }
 
         const incident = await prisma.incidentReport.create({
-            data: {
-                border,
-                type,
-                note: note || null,
-                nickname: user,
-            },
+            data: { border, type, note: note || null, nickname },
         });
 
         return NextResponse.json({ success: true, incident });
@@ -88,12 +86,17 @@ export async function POST(req: Request) {
     }
 }
 
-/**
- * PATCH /api/incidents — Dismiss an incident report (community moderation)
- * Body: { incidentId: number }
- * 2 dismissals = auto-resolve
- */
 export async function PATCH(req: Request) {
+    // 🔐 IP rate limit: 5 dismissals per hour
+    const ip = getClientIp(req);
+    const rl = checkRateLimit(ip, "dismiss", 5, 60 * 60_000);
+    if (!rl.allowed) {
+        return NextResponse.json(
+            { success: false, error: "Too many dismissal requests. Try again later." },
+            { status: 429 }
+        );
+    }
+
     try {
         const { incidentId } = await req.json();
         if (!incidentId || typeof incidentId !== "number") {
@@ -105,24 +108,16 @@ export async function PATCH(req: Request) {
             return NextResponse.json({ success: false, error: "Incident not found or already resolved" }, { status: 404 });
         }
 
-        // Use the note field to track dismiss count (append __DISMISS__)
         const currentNote = incident.note || "";
         const dismissCount = (currentNote.match(/__DISMISS__/g) || []).length + 1;
         const shouldResolve = dismissCount >= DISMISS_THRESHOLD;
 
         await prisma.incidentReport.update({
             where: { id: incidentId },
-            data: {
-                note: currentNote + "__DISMISS__",
-                resolved: shouldResolve,
-            },
+            data: { note: currentNote + "__DISMISS__", resolved: shouldResolve },
         });
 
-        return NextResponse.json({
-            success: true,
-            dismissed: dismissCount,
-            resolved: shouldResolve,
-        });
+        return NextResponse.json({ success: true, dismissed: dismissCount, resolved: shouldResolve });
     } catch (error) {
         console.error("Dismiss error:", error);
         return NextResponse.json({ success: false, error: "Failed to dismiss incident" }, { status: 500 });
