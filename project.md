@@ -1,5 +1,5 @@
 # project.md — BorderIQ (formerly Pathfinder Border Intelligence)
-**Last Updated**: 2026-03-09 | **Version**: v3.5.0 | **ALESA**: v14.3.0 Sentinel Mode
+**Last Updated**: 2026-03-10 | **Version**: v3.5.1 | **ALESA**: v14.3.0 Sentinel Mode
 
 ---
 
@@ -111,8 +111,11 @@
 | 8 | **🏷️ Tedungan → Kuala Lurah** | ✅ Renamed across 9 files |
 | 9 | **🗺️ Live Traffic Map** | ✅ TomTom Flow tile overlay, toggle, legend, theme-aware (dark/light) |
 | 10 | **🧠 Rebrand → BorderIQ** | ✅ Renamed across 9 files, zero Pathfinder refs remaining |
-| 11 | **📊 Weekly Jam Report** | ⬜ Planned |
-| 12 | **🌐 Multi-language** | ⬜ Planned |
+| 11 | **📍 Nearest Border Coord Fix** | ✅ BORDER_COORDS updated to verified Brunei-side CIQ approach coordinates |
+| 12 | **🌐 Community Text → English** | ✅ Translated all BM strings in QueueSnap, IncidentReport, Leaderboard |
+| 13 | **🛡️ Bad Words Filter + Ban** | ✅ ~180 terms (EN+BM), leet-speak normalization, 24h IP ban on violation |
+| 14 | **📊 Weekly Jam Report** | ⬜ Planned |
+| 15 | **🌐 Multi-language** | ⬜ Planned |
 
 ---
 
@@ -161,7 +164,7 @@ src/app/api/
   telegram/broadcast/  — Telegram channel post [🔐 INTERNAL_API_SECRET required]
 
 src/lib/
-  rateLimit.ts         — [NEW] Shared IP rate limiter, sanitize, auth helpers
+  rateLimit.ts         — Shared IP rate limiter, sanitize, auth, bad words filter, IP ban system
 ```
 
 ---
@@ -172,4 +175,5 @@ src/lib/
 - **Threshold alert**: `sendThresholdAlert()` fires FCM push if queue > 45 min
 - **Theme system**: `data-theme` attribute on `<html>` (not CSS class) — immune to Next.js hydration conflicts
 - **Security model**: Broadcast endpoints require `Authorization: Bearer <INTERNAL_API_SECRET>`; write endpoints IP-rate-limited via `src/lib/rateLimit.ts`; text inputs sanitized (HTML stripped, length capped)
+- **Content moderation**: Chat messages filtered by `containsBadWords()` (~180 terms EN+BM, leet-speak normalization); violations trigger 24h IP ban via `banIp()` (in-memory, resets on server restart)
 - **Free tier**: TomTom 2,500 req/day; 8 req/refresh × 288 refreshes/day = 2,304 req ✅

@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.5.1] — 2026-03-10
+
+### Fixed
+- **📍 Nearest Border Distance** — Updated `BORDER_COORDS` in `useGeolocation.ts` to use verified Brunei-side CIQ approach coordinates. Sungai Tujuh lng corrected from `114.0723` (Malaysia side) to `114.0900` (Brunei side), fixing inflated distance calculations for Kuala Belait users
+
+### Changed
+- **🌐 Community Text → English** — Translated all remaining Bahasa Melayu UI strings to English across 3 community components:
+  - `QueueSnap.tsx` — 10 strings (form labels, GPS status, submit button, success messages, time formatting)
+  - `IncidentReport.tsx` — 11 strings (form labels, incident types, submit flow, success messages)
+  - `Leaderboard.tsx` — 2 strings (subtitle, empty state)
+
+### Added
+- **🛡️ Bad Words Filter + 24h IP Ban** — Comprehensive profanity moderation system for community chat:
+  - ~180 terms covering English profanity, sexual/vulgar terms, racial slurs, Malay/Brunei/Sarawak dialect profanity
+  - Leet-speak normalization (`f@ck`, `sh1t`, `b0d0h`, `b4bi` etc.)
+  - Word-boundary matching to prevent false positives
+  - Auto-ban: first bad word → message blocked + IP banned 24 hours
+  - IP-based ban (not nickname) — same phone = same ban regardless of nickname changes
+  - Checks both message content AND nickname
+
+#### Modified
+- `src/hooks/useGeolocation.ts` — Updated `BORDER_COORDS` coordinates
+- `src/components/QueueSnap.tsx` — BM → English translation
+- `src/components/IncidentReport.tsx` — BM → English translation
+- `src/components/Leaderboard.tsx` — BM → English translation
+- `src/lib/rateLimit.ts` — Added `containsBadWords()`, `banIp()`, `isIpBanned()`, 180-term profanity list
+- `src/app/api/chat/route.ts` — Wired bad words filter + IP ban into POST handler
+
+---
+
 ## [v3.5.0] — 2026-03-09
 
 ### Added

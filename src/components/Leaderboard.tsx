@@ -66,7 +66,7 @@ export const Leaderboard = () => {
                 <div>
                     <p className="text-sm font-bold">Leaderboard 🏆</p>
                     <p className="text-[11px]" style={{ color: "var(--muted-foreground)" }}>
-                        Top contributors minggu ini
+                        Top contributors this week
                     </p>
                 </div>
             </div>
@@ -75,7 +75,7 @@ export const Leaderboard = () => {
             {leaders.length === 0 ? (
                 <div className="px-4 pb-5 text-center">
                     <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>
-                        Belum ada data — jadilah yang pertama! 💪
+                        No data yet — be the first to contribute! 💪
                     </p>
                 </div>
             ) : (

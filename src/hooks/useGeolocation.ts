@@ -86,12 +86,12 @@ export function useGeolocation(): UseGeolocationReturn {
     return { position, loading, error, requestLocation, denied };
 }
 
-// ─── Border Coordinates ───
+// ─── Border Coordinates (verified Brunei-side CIQ approach — Phase 8) ───
 export const BORDER_COORDS: Record<string, { lat: number; lng: number; name: string; shortName: string }> = {
-    "Sungai Tujuh": { lat: 4.5852, lng: 114.0723, name: "CIQ Sungai Tujuh", shortName: "STJ" },
-    "Kuala Lurah": { lat: 4.7407, lng: 114.8135, name: "CIQ Kuala Lurah", shortName: "KLR" },
-    "Ujung Jalan": { lat: 4.6890, lng: 115.0393, name: "CIQ Ujung Jalan", shortName: "UJJ" },
-    "Mengkalap": { lat: 4.7933, lng: 115.2363, name: "CIQ Mengkalap", shortName: "MKP" },
+    "Sungai Tujuh": { lat: 4.5835, lng: 114.0900, name: "CIQ Sungai Tujuh", shortName: "STJ" },
+    "Kuala Lurah": { lat: 4.7417, lng: 114.8137, name: "CIQ Kuala Lurah", shortName: "KLR" },
+    "Ujung Jalan": { lat: 4.6896, lng: 115.0400, name: "CIQ Ujung Jalan", shortName: "UJJ" },
+    "Mengkalap": { lat: 4.7931, lng: 115.2358, name: "CIQ Mengkalap", shortName: "MKP" },
 };
 
 // ─── Haversine Distance (km) ───

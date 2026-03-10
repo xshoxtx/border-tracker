@@ -173,7 +173,7 @@ export const QueueSnap = () => {
                     setSelectedBorder("");
                 }, 2000);
             } else {
-                setError(json.error || "Gagal hantar snap");
+                setError(json.error || "Failed to submit snap");
             }
         } catch {
             setError("Connection error");
@@ -205,9 +205,9 @@ export const QueueSnap = () => {
 
     const formatTime = (dateStr: string) => {
         const mins = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
-        if (mins < 1) return "baru";
-        if (mins < 60) return `${mins}m lalu`;
-        return `${Math.floor(mins / 60)}j lalu`;
+        if (mins < 1) return "just now";
+        if (mins < 60) return `${mins}m ago`;
+        return `${Math.floor(mins / 60)}h ago`;
     };
 
     return (
@@ -230,7 +230,7 @@ export const QueueSnap = () => {
                         <div>
                             <p className="text-sm font-bold">Queue Snap 📸</p>
                             <p className="text-[11px]" style={{ color: "var(--muted-foreground)" }}>
-                                Snap gambar queue sekarang
+                                Snap a photo of the current queue
                             </p>
                         </div>
                     </div>
@@ -249,7 +249,7 @@ export const QueueSnap = () => {
                     >
                         <div className="p-4 space-y-4">
                             <div className="flex items-center justify-between">
-                                <p className="text-sm font-bold">Ambil Gambar Queue</p>
+                                <p className="text-sm font-bold">Take Queue Photo</p>
                                 <button onClick={() => setIsOpen(false)} className="haptic-btn p-1">
                                     <X size={18} style={{ color: "var(--muted-foreground)" }} />
                                 </button>
@@ -274,7 +274,7 @@ export const QueueSnap = () => {
                                 >
                                     <Camera size={40} weight="duotone" style={{ color: "var(--muted-foreground)" }} />
                                     <p className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
-                                        {compressing ? "Compressing..." : "Tap untuk buka kamera"}
+                                        {compressing ? "Compressing..." : "Tap to open camera"}
                                     </p>
                                 </motion.button>
                             ) : (
@@ -294,13 +294,13 @@ export const QueueSnap = () => {
                             {/* GPS Status */}
                             <div className="flex items-center gap-2 text-[11px]" style={{ color: "var(--muted-foreground)" }}>
                                 <MapPin size={14} weight="fill" style={{ color: position ? "var(--status-smooth)" : "var(--muted-foreground)" }} />
-                                {position ? "GPS locked ✅" : "Menunggu GPS..."}
+                                {position ? "GPS locked ✅" : "Waiting for GPS..."}
                             </div>
 
                             {/* Border Selector */}
                             <div>
                                 <p className="text-xs font-semibold mb-2" style={{ color: "var(--muted-foreground)" }}>
-                                    Border mana?
+                                    Which border?
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     {SNAP_BORDERS.map((b) => (
@@ -333,11 +333,11 @@ export const QueueSnap = () => {
                                     className="btn-primary haptic-btn w-full flex items-center justify-center gap-2 disabled:opacity-50"
                                 >
                                     {submitting ? (
-                                        <span className="text-sm">Menghantar...</span>
+                                        <span className="text-sm">Submitting...</span>
                                     ) : (
                                         <>
                                             <PaperPlaneTilt size={16} weight="fill" />
-                                            Hantar Snap
+                                            Submit Snap
                                         </>
                                     )}
                                 </motion.button>
@@ -354,9 +354,9 @@ export const QueueSnap = () => {
                         className="clean-card p-5 text-center"
                     >
                         <CheckCircle size={40} weight="fill" style={{ color: "var(--status-smooth)" }} />
-                        <p className="text-sm font-bold mt-2">Snap dihantar! 📸</p>
+                        <p className="text-sm font-bold mt-2">Snap submitted! 📸</p>
                         <p className="text-[11px] mt-1" style={{ color: "var(--muted-foreground)" }}>
-                            Terima kasih, gambar anda membantu traveler lain
+                            Thanks, your photo helps fellow travelers
                         </p>
                     </motion.div>
                 )}

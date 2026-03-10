@@ -185,3 +185,20 @@
 - **React-leaflet gotcha**: `MapContainer` is immutable after creation — can't change `center`, `zoom`, or tile URLs dynamically. To swap tile layers (e.g., dark↔light), use a `key` prop so React unmounts and remounts the `TileLayer` component.
 - **CARTO base map URLs**: Dark = `dark_all`, Light = `light_all`. The `voyager` style needs `rastertiles/voyager` prefix — using just `voyager` returns blank tiles.
 
+---
+
+### [2026-03-10] Coordinate Accuracy Matters for Distance Calculations
+- **Problem**: Users in Kuala Belait (Brunei) saw inflated distances to Sungai Tujuh border. The `BORDER_COORDS` longitude was `114.0723` — which placed it on the **Malaysia side** of the border.
+- **Root cause**: Original coordinates were approximate. The Haversine formula amplifies even small coordinate errors — a 2km placement error translates to a noticeably wrong distance for nearby users.
+- **Fix**: Updated to verified Brunei-side CIQ approach coordinates (`114.0900`) matching the border API route coordinates confirmed during Phase 8.
+- **Lesson**: **When coordinates are used for user-facing distance calculations, always verify the exact side of the border/boundary they represent.** Cross-reference with the coordinates used in other parts of the app (e.g., API routes) to ensure consistency.
+
+---
+
+### [2026-03-10] Content Moderation — IP Ban, Not Nickname Ban
+- **Problem**: Community chat needed profanity filtering. Users can change nicknames freely, so nickname-based banning is trivially bypassed.
+- **Solution**: Three-layer system: (1) `containsBadWords()` checks message AND nickname, (2) `banIp()` bans the IP for 24h on first violation, (3) `isIpBanned()` rejects ALL subsequent requests from that IP regardless of nickname.
+- **Leet-speak bypass prevention**: Normalize common substitutions (`0→o`, `1→i`, `3→e`, `4→a`, `@→a`, `$→s`) before matching.
+- **Word-boundary matching**: Each term compiled as `/\bword\b/i` regex to prevent false positives (e.g., "assessment" doesn't trigger "ass").
+- **Trade-off**: In-memory ban store resets on server restart (PM2 restart clears all bans). Acceptable for this use case — persistent bans would require database storage.
+- **Lesson**: **For anonymous/low-trust systems, always use IP-based enforcement as the primary layer.** Nickname/user-identity checks are unreliable without authentication. Leet-speak normalization is essential — users WILL try `f@ck`, `sh1t`, `b0d0h` etc.

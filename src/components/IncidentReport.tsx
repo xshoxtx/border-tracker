@@ -28,7 +28,7 @@ const INCIDENT_TYPES = [
     { id: "system_down", label: "System Down", emoji: "🔴", icon: Prohibit },
     { id: "extra_counters", label: "Extra Counters", emoji: "🟢", icon: ArrowsCounterClockwise },
     { id: "road_closure", label: "Road Closure", emoji: "🚧", icon: TrafficCone },
-    { id: "other", label: "Lain-lain", emoji: "⚠️", icon: Info },
+    { id: "other", label: "Other", emoji: "⚠️", icon: Info },
 ];
 
 interface IncidentData {
@@ -134,7 +134,7 @@ export const IncidentReport = () => {
                     setNote("");
                 }, 2000);
             } else {
-                setError(json.error || "Gagal hantar laporan");
+                setError(json.error || "Failed to submit report");
             }
         } catch {
             setError("Connection error");
@@ -145,9 +145,9 @@ export const IncidentReport = () => {
 
     const formatTime = (dateStr: string) => {
         const mins = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
-        if (mins < 1) return "baru";
-        if (mins < 60) return `${mins}m lalu`;
-        return `${Math.floor(mins / 60)}j lalu`;
+        if (mins < 1) return "just now";
+        if (mins < 60) return `${mins}m ago`;
+        return `${Math.floor(mins / 60)}h ago`;
     };
 
     const getTypeInfo = (typeId: string) => INCIDENT_TYPES.find((t) => t.id === typeId) || INCIDENT_TYPES[3];
@@ -231,7 +231,7 @@ export const IncidentReport = () => {
                         <div>
                             <p className="text-sm font-bold">Report Incident 🚨</p>
                             <p className="text-[11px]" style={{ color: "var(--muted-foreground)" }}>
-                                System down, road closure, dll.
+                                System down, road closure, etc.
                             </p>
                         </div>
                     </div>
@@ -250,7 +250,7 @@ export const IncidentReport = () => {
                     >
                         <div className="p-4 space-y-4">
                             <div className="flex items-center justify-between">
-                                <p className="text-sm font-bold">Lapor Insiden</p>
+                                <p className="text-sm font-bold">Report Incident</p>
                                 <button onClick={() => setIsOpen(false)} className="haptic-btn p-1">
                                     <X size={18} style={{ color: "var(--muted-foreground)" }} />
                                 </button>
@@ -259,7 +259,7 @@ export const IncidentReport = () => {
                             {/* Border */}
                             <div>
                                 <p className="text-xs font-semibold mb-2" style={{ color: "var(--muted-foreground)" }}>
-                                    Border mana?
+                                    Which border?
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     {CROSSING_BORDERS.map((b) => (
@@ -277,7 +277,7 @@ export const IncidentReport = () => {
                             {selectedBorder && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                                     <p className="text-xs font-semibold mb-2" style={{ color: "var(--muted-foreground)" }}>
-                                        Jenis insiden?
+                                        Incident type?
                                     </p>
                                     <div className="grid grid-cols-2 gap-2">
                                         {INCIDENT_TYPES.map((type) => {
@@ -309,7 +309,7 @@ export const IncidentReport = () => {
                                         type="text"
                                         value={note}
                                         onChange={(e) => setNote(e.target.value)}
-                                        placeholder="Maklumat tambahan? (optional)"
+                                        placeholder="Additional details? (optional)"
                                         className="native-input text-sm"
                                         maxLength={150}
                                     />
@@ -335,11 +335,11 @@ export const IncidentReport = () => {
                                     className="btn-primary haptic-btn w-full flex items-center justify-center gap-2 disabled:opacity-50"
                                 >
                                     {submitting ? (
-                                        <span className="text-sm">Menghantar...</span>
+                                        <span className="text-sm">Submitting...</span>
                                     ) : (
                                         <>
                                             <PaperPlaneTilt size={16} weight="fill" />
-                                            Hantar Laporan
+                                            Submit Report
                                         </>
                                     )}
                                 </motion.button>
@@ -356,9 +356,9 @@ export const IncidentReport = () => {
                         className="clean-card p-5 text-center"
                     >
                         <CheckCircle size={40} weight="fill" style={{ color: "var(--status-smooth)" }} />
-                        <p className="text-sm font-bold mt-2">Laporan dihantar! 🚨</p>
+                        <p className="text-sm font-bold mt-2">Report submitted! 🚨</p>
                         <p className="text-[11px] mt-1" style={{ color: "var(--muted-foreground)" }}>
-                            Terima kasih, maklumat ini membantu traveler lain
+                            Thanks, this helps fellow travelers stay informed
                         </p>
                     </motion.div>
                 )}

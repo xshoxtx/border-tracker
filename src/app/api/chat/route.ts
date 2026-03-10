@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { checkRateLimit, getClientIp, sanitize } from "@/lib/rateLimit";
+import { checkRateLimit, getClientIp, sanitize, containsBadWords, banIp, isIpBanned } from "@/lib/rateLimit";
 
 export async function GET() {
   try {
@@ -16,8 +16,19 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  // 🔐 IP rate limit: 5 messages per minute
   const ip = getClientIp(req);
+
+  // 🚫 Check if IP is banned
+  const ban = isIpBanned(ip);
+  if (ban.banned) {
+    const hoursLeft = Math.ceil(ban.remainingMs / (60 * 60 * 1000));
+    return NextResponse.json(
+      { success: false, error: `You are banned for ${hoursLeft}h due to inappropriate language.` },
+      { status: 403 }
+    );
+  }
+
+  // 🔐 IP rate limit: 5 messages per minute
   const rl = checkRateLimit(ip, "chat", 5, 60_000);
   if (!rl.allowed) {
     const waitSecs = Math.ceil(rl.retryAfterMs / 1000);
@@ -39,6 +50,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "Missing fields" }, { status: 400 });
     }
 
+    // 🚫 Bad words filter — check both message and nickname
+    if (containsBadWords(message) || containsBadWords(user)) {
+      banIp(ip); // 24-hour ban
+      return NextResponse.json(
+        { success: false, error: "Your message was blocked due to inappropriate language. You have been banned for 24 hours." },
+        { status: 403 }
+      );
+    }
+
     const newMessage = await prisma.chatMessage.create({
       data: { user, message, time },
     });
@@ -49,3 +69,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, error: "Failed to send message" }, { status: 500 });
   }
 }
+
