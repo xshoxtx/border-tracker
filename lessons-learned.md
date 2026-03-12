@@ -202,3 +202,11 @@
 - **Word-boundary matching**: Each term compiled as `/\bword\b/i` regex to prevent false positives (e.g., "assessment" doesn't trigger "ass").
 - **Trade-off**: In-memory ban store resets on server restart (PM2 restart clears all bans). Acceptable for this use case — persistent bans would require database storage.
 - **Lesson**: **For anonymous/low-trust systems, always use IP-based enforcement as the primary layer.** Nickname/user-identity checks are unreliable without authentication. Leet-speak normalization is essential — users WILL try `f@ck`, `sh1t`, `b0d0h` etc.
+
+---
+
+### [2026-03-12] Apache `.htaccess` CSP Overrides Next.js — GA4 Blocked
+- **Problem**: GA4 (`G-53KPQLQ6E9`) was implemented in `layout.tsx` and whitelisted in `next.config.ts` CSP — but GA dashboard showed "No data received".
+- **Root cause**: Apache proxy serves TWO `Content-Security-Policy` headers (one from `.htaccess`, one from Next.js). Browsers enforce the **most restrictive** of all CSP headers. The old `.htaccess` CSP had no `googletagmanager.com` entries — blocked the GA script even though `next.config.ts` allowed it.
+- **Fix**: Updated `.htaccess` to match `next.config.ts` — added GA4 domains to `script-src`, `img-src`, and `connect-src`.
+- **Lesson**: **When running Next.js behind Apache proxy, treat `.htaccess` as the primary CSP gate.** Both files send CSP headers and the browser enforces BOTH. Any time you add a new external domain to `next.config.ts`, ALWAYS update `.htaccess` simultaneously. Consider keeping CSP in only ONE place to avoid drift.

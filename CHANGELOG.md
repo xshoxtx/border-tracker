@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.5.2] — 2026-03-12
+
+### Fixed
+- **📊 GA4 CSP Hotfix** — `.htaccess` Apache CSP was overriding `next.config.ts` headers and blocking Google Analytics from loading. Updated `.htaccess` to match the whitelist in `next.config.ts`:
+  - `script-src` → added `https://www.googletagmanager.com`
+  - `img-src` → added `https://www.google-analytics.com https://www.googletagmanager.com`
+  - `connect-src` → added `https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com`
+- GA4 (`G-53KPQLQ6E9`) now correctly fires pageview hits — dashboard shows live data
+
+#### Modified
+- `.htaccess` — CSP updated with full GA4 domain whitelist
+
+---
+
 ## [v3.5.1] — 2026-03-10
 
 ### Fixed

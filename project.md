@@ -1,5 +1,5 @@
 # project.md — BorderIQ (formerly Pathfinder Border Intelligence)
-**Last Updated**: 2026-03-10 | **Version**: v3.5.1 | **ALESA**: v14.3.0 Sentinel Mode
+**Last Updated**: 2026-03-12 | **Version**: v3.5.2 | **ALESA**: v14.3.0 Sentinel Mode
 
 ---
 
