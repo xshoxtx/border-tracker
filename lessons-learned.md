@@ -210,3 +210,12 @@
 - **Root cause**: Apache proxy serves TWO `Content-Security-Policy` headers (one from `.htaccess`, one from Next.js). Browsers enforce the **most restrictive** of all CSP headers. The old `.htaccess` CSP had no `googletagmanager.com` entries — blocked the GA script even though `next.config.ts` allowed it.
 - **Fix**: Updated `.htaccess` to match `next.config.ts` — added GA4 domains to `script-src`, `img-src`, and `connect-src`.
 - **Lesson**: **When running Next.js behind Apache proxy, treat `.htaccess` as the primary CSP gate.** Both files send CSP headers and the browser enforces BOTH. Any time you add a new external domain to `next.config.ts`, ALWAYS update `.htaccess` simultaneously. Consider keeping CSP in only ONE place to avoid drift.
+
+---
+
+### [2026-03-17] React Hydration Overwrites Blocking Script Theme — ThemeProvider Fix
+- **Problem (3rd occurrence)**: Light mode reverts to dark on PWA reopen (iOS + Android). The blocking `<script>` in `<head>` correctly sets `data-theme="light"`, BUT React hydration reconciles the `<html>` element back to `data-theme="dark"` (the server-rendered default).
+- **Why previous fixes were incomplete**: `suppressHydrationWarning` only mutes the console warning — it does NOT prevent React from re-applying server-rendered attributes. `pageshow` listener only fires on bfcache restore (`e.persisted=true`), not cold starts. `visibilitychange` only fires on tab/app switch.
+- **Fix**: Created `ThemeProvider.tsx` — a zero-UI client component (`useEffect` only, returns null) that re-applies the saved theme from `localStorage` immediately after React hydration completes. Mounted in `layout.tsx` alongside `NotificationRegister`.
+- **Why this works**: `useEffect` fires AFTER hydration, so it runs after React has already overwritten the attribute. It's the last write to `data-theme`, so it wins.
+- **Lesson**: **Blocking scripts prevent FOUC but cannot survive React hydration.** For SSR apps with client-side theme state, you need BOTH: (1) blocking script for visual flash prevention, AND (2) a client component `useEffect` to re-apply after hydration. The blocking script alone is necessary but not sufficient.

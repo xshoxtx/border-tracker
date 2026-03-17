@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v3.5.3] — 2026-03-17
+
+### Fixed
+- **🌓 PWA Theme Persistence (Round 3)** — Light mode reverted to dark on PWA cold start (iOS + Android). Root cause: React hydration overwrites the blocking script's `data-theme` attribute back to `"dark"` (server-rendered default). `suppressHydrationWarning` only mutes the warning — it does NOT prevent attribute reconciliation
+  - **Fix**: New `ThemeProvider.tsx` client component (`useEffect` → returns null) re-applies saved theme from `localStorage` immediately after React hydration completes. Mounted in `layout.tsx`
+  - Blocking script retained for FOUC prevention during SSR→hydration window
+
+#### New Files
+- `src/components/ThemeProvider.tsx` — Zero-UI client component for post-hydration theme correction
+
+#### Modified
+- `src/app/layout.tsx` — Added `<ThemeProvider />` import + render
+
+---
+
 ## [v3.5.2] — 2026-03-12
 
 ### Fixed

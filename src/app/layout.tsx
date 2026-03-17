@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { NotificationRegister } from "@/components/NotificationRegister";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const GA_ID = "G-53KPQLQ6E9";
 
@@ -122,6 +123,7 @@ export default function RootLayout({
           }}
         />
         <main className="relative z-0">
+          <ThemeProvider />
           <NotificationRegister />
           {children}
         </main>
